@@ -7,9 +7,9 @@ env:
   TEST_RUNNER_PORT_MIN: "14000"  # Must be larger than 12321, which is used for the http cache. See https://cirrus-ci.org/guide/writing-tasks/#http-cache
   DEBIAN_FRONTEND: "noninteractive"
 task:
-  name: "FreeBSD 13.2 [system libs]"
+  name: "FreeBSD [system libs]"
   freebsd_instance:
-    image_family: freebsd-13-2  # https://cirrus-ci.org/guide/FreeBSD/
+    image_family: freebsd-14-0  # https://cirrus-ci.org/guide/FreeBSD/
     cpu: 2
     memory: 8G
   env:
@@ -78,11 +78,12 @@ task:
     - cd bitcoin-core
     - ./test/functional/test_runner.py $MAKEJOBS --ci --extended --combinedlogslen=199999000 --quiet --failfast --timeout-factor=3
 task:
-  container:
-    image: ubuntu:devel
+  compute_engine_instance:
+    image_project: ubuntu-os-cloud
+    image: family/ubuntu-2204-lts
+    disk: 70
     cpu: 4
     memory: 16G
-    greedy: true
   env:
     MAKEJOBS: "-j6"  # Reduce jobs to avoid OOM under gcc
     TEST_RUNNER_PORT_MIN: "14000"  # Must be larger than 12321, which is used for the http cache. See https://cirrus-ci.org/guide/writing-tasks/#http-cache

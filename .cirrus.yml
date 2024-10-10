@@ -35,7 +35,7 @@ task:
     - gmake -C depends NO_BOOST=1 NO_LIBEVENT=1 NO_QT=1 NO_SQLITE=1 NO_NATPMP=1 NO_UPNP=1 NO_ZMQ=1 NO_USDT=1
   configure_script:
     - cd bitcoin-core
-    - cmake -B ./bld -DBerkeleyDB_INCLUDE_DIR:PATH="$(pwd)/depends/$(./depends/config.guess)/include" -DWITH_BDB=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWITH_CCACHE=ON
+    - cmake -B ./bld -DBerkeleyDB_INCLUDE_DIR:PATH="$(pwd)/depends/$(./depends/config.guess)/include" -DWITH_BDB=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DWITH_CCACHE=ON
   make_script:
     - cd bitcoin-core
     - cmake --build ./bld $MAKEJOBS
@@ -58,23 +58,22 @@ task:
     folder: "/tmp/ccache_dir"
   install_script:
     - zypper --non-interactive install -t pattern devel_basis
-    - zypper --non-interactive install e2fsprogs git libtool pkg-config automake python3 libevent-devel libboost_headers-devel gcc-c++ ccache zeromq-devel libqt5-qtbase-devel libqt5-qttools-devel qrencode-devel sqlite3-devel
+    - zypper --non-interactive install e2fsprogs git pkg-config cmake python3 libevent-devel libboost_headers-devel gcc-c++ ccache zeromq-devel libqt5-qtbase-devel libqt5-qttools-devel qrencode-devel sqlite3-devel
     - ccache --max-size=${CCACHE_SIZE}
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   configure_script:
     - cd bitcoin-core
-    - ./autogen.sh
-    - ./configure || ( cat config.log && false)
+    - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON
   make_script:
     - cd bitcoin-core
-    - make ${MAKEJOBS} || ( echo "Build failure. Verbose build follows." && make V=1 ; false )
+    - cmake --build ./bld $MAKEJOBS
   check_script:
     - cd bitcoin-core
-    - make check ${MAKEJOBS} VERBOSE=1
+    - ctest --test-dir ./bld ${MAKEJOBS}
   functional_test_script:
     - cd bitcoin-core
-    - ./test/functional/test_runner.py $MAKEJOBS --ci --extended --combinedlogslen=199999000 --quiet --failfast --timeout-factor=3
+    - ./bld/test/functional/test_runner.py $MAKEJOBS --ci --extended --combinedlogslen=199999000 --quiet --failfast --timeout-factor=3
 task:
   container:
     image: ubuntu:devel

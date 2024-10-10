@@ -99,7 +99,6 @@ task:
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
     - cd bitcoin-core
-    - ./autogen.sh
   matrix:
     - name: "ubuntu:devel [system libs, asan, clang, sqlite-only, libc++]"
       install_matrix_script:

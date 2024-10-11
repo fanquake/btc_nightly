@@ -159,7 +159,7 @@ task:
   ccache_cache:
     folder: "/tmp/ccache_dir"
   install_script:
-    - apk --no-cache --update add e2fsprogs-extra cmake g++ gcc git make pkgconfig python3 boost-dev libevent-dev zeromq-dev qt5-qtbase-dev qt5-qttools-dev ccache libqrencode-tools
+    - apk --no-cache --update add e2fsprogs-extra cmake g++ gcc git make pkgconfig python3 boost-dev libevent-dev zeromq-dev qt5-qtbase-dev qt5-qttools-dev ccache libqrencode-dev
     - ccache --max-size=${CCACHE_SIZE}
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
@@ -187,23 +187,22 @@ task:
   ccache_cache:
     folder: "/tmp/ccache_dir"
   install_script:
-    - pacman --noconfirm -Syu e2fsprogs autoconf automake git gcc libtool make pkg-config python3 boost libevent zeromq ccache qt5
+    - pacman --noconfirm -Syu e2fsprogs cmake git gcc make pkg-config python3 boost libevent zeromq ccache qt5 qrencode
     - ccache --max-size=${CCACHE_SIZE}
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   configure_script:
     - cd bitcoin-core
-    - ./autogen.sh
-    - ./configure || ( cat config.log && false)
+    - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON
   make_script:
     - cd bitcoin-core
-    - make ${MAKEJOBS} || ( echo "Build failure. Verbose build follows." && make V=1 ; false )
+    - cmake --build ./bld $MAKEJOBS
   check_script:
     - cd bitcoin-core
-    - make check ${MAKEJOBS} VERBOSE=1
+    - ctest --test-dir ./bld ${MAKEJOBS}
   functional_test_script:
     - cd bitcoin-core
-    - ./test/functional/test_runner.py $MAKEJOBS --ci --extended --combinedlogslen=199999000 --quiet --failfast --timeout-factor=3
+    - ./bld/test/functional/test_runner.py $MAKEJOBS --ci --extended --combinedlogslen=199999000 --quiet --failfast --timeout-factor=3
 task:
   name: "Android [no cache]"
   container:

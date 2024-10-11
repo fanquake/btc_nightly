@@ -6,6 +6,7 @@ timeout_in: 120m
 env:
   TEST_RUNNER_PORT_MIN: "14000"  # Must be larger than 12321, which is used for the http cache. See https://cirrus-ci.org/guide/writing-tasks/#http-cache
   DEBIAN_FRONTEND: "noninteractive"
+  CTEST_OUTPUT_ON_FAILURE: "ON"
 task:
   name: "FreeBSD [system libs]"
   freebsd_instance:

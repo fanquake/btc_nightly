@@ -36,7 +36,7 @@ task:
     - gmake -C depends NO_BOOST=1 NO_LIBEVENT=1 NO_QT=1 NO_SQLITE=1 NO_NATPMP=1 NO_UPNP=1 NO_ZMQ=1 NO_USDT=1
   configure_script:
     - cd bitcoin-core
-    - cmake -B ./bld -DBerkeleyDB_INCLUDE_DIR:PATH="$(pwd)/depends/$(./depends/config.guess)/include" -DWITH_BDB=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DWITH_CCACHE=ON
+    - cmake -B ./bld -DBerkeleyDB_INCLUDE_DIR:PATH="$(pwd)/depends/$(./depends/config.guess)/include" -DWITH_BDB=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DWITH_CCACHE=ON -DWITH_NATPMP=ON
   make_script:
     - cd bitcoin-core
     - cmake --build ./bld $MAKEJOBS
@@ -65,7 +65,7 @@ task:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   configure_script:
     - cd bitcoin-core
-    - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON
+    - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON -DWITH_NATPMP=ON
   make_script:
     - cd bitcoin-core
     - cmake --build ./bld $MAKEJOBS
@@ -105,36 +105,36 @@ task:
       install_matrix_script:
         - apt install -y libc++abi-dev libc++-dev clang llvm libsqlite3-dev
         - cd bitcoin-core
-        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=address,integer,undefined -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++;-stdlib=libc++"
+        - cmake -B ./bld -DWITH_NATPMP=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=address,integer,undefined -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++;-stdlib=libc++"
     - name: "ubuntu:devel [system libs, asan, clang, sqlite-only]"
       install_matrix_script:
         - apt install -y clang llvm libsqlite3-dev
         - cd bitcoin-core
-        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=address,integer,undefined -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++"
+        - cmake -B ./bld -DWITH_NATPMP=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=address,integer,undefined -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++"
     - name: "ubuntu:devel [system libs, asan, gcc, bdb-only]"
       install_matrix_script:
         - apt install -y libdb++-dev
         - cd bitcoin-core
         - echo 'nonnull-attribute:streams.h'   >> test/sanitizer_suppressions/ubsan  # runtime error: null pointer passed as argument 1, which is declared to never be null, fwrite
         - echo 'nonnull-attribute:streams.cpp' >> test/sanitizer_suppressions/ubsan  # runtime error: null pointer passed as argument 1, which is declared to never be null, fwrite
-        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=OFF -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=address,undefined -DWITH_BDB=ON -DWITH_SQLITE=OFF -DWARN_INCOMPATIBLE_BDB=OFF -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized"
+        - cmake -B ./bld -DWITH_NATPMP=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=OFF -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=address,undefined -DWITH_BDB=ON -DWITH_SQLITE=OFF -DWARN_INCOMPATIBLE_BDB=OFF -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized"
     - name: "ubuntu:devel [system libs, tsan, clang, sqlite-only, libc++]"
       install_matrix_script:
         - apt install -y libc++abi-dev libc++-dev clang llvm libsqlite3-dev
         - cd bitcoin-core
-        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=thread -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++;-stdlib=libc++"
+        - cmake -B ./bld -DWITH_NATPMP=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=thread -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++;-stdlib=libc++"
     - name: "ubuntu:devel [system libs, tsan, clang, sqlite-only]"
       install_matrix_script:
         - apt install -y clang llvm libsqlite3-dev
         - cd bitcoin-core
-        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=thread -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++"
+        - cmake -B ./bld -DWITH_NATPMP=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=thread -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++"
     - name: "ubuntu:devel [system libs, tsan, gcc, bdb-only, libqt suppression]"
       install_matrix_script:
         - apt install -y libdb++-dev
         - cd bitcoin-core
         - echo 'race:libQt5Core' >> test/sanitizer_suppressions/tsan
         - echo 'race:libQt5Test' >> test/sanitizer_suppressions/tsan
-        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=OFF -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=thread -DWITH_BDB=ON -DWITH_SQLITE=OFF -DWARN_INCOMPATIBLE_BDB=OFF -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized"
+        - cmake -B ./bld -DWITH_NATPMP=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=OFF -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=thread -DWITH_BDB=ON -DWITH_SQLITE=OFF -DWARN_INCOMPATIBLE_BDB=OFF -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized"
   make_script:
     - cd bitcoin-core
     - cmake --build ./bld $MAKEJOBS
@@ -145,7 +145,7 @@ task:
     - export TSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/tsan:halt_on_error=1"
     - export UBSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/ubsan:print_stacktrace=1:halt_on_error=1"
     - ctest --test-dir ./bld ${MAKEJOBS}
-    - ./bld/test/functional/test_runner.py $MAKEJOBS --ci --exclude feature_dbcrash --extended --combinedlogslen=199999000 --quiet --failfast --timeout-factor=9
+    - ./bld/test/functional/test_runner.py $MAKEJOBS --ci --extended --combinedlogslen=199999000 --quiet --failfast --timeout-factor=9
 task:
   name: "Alpine [system libs]"
   container:
@@ -165,7 +165,7 @@ task:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   configure_script:
     - cd bitcoin-core
-    - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON
+    - cmake -B ./bld -DWITH_NATPMP=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON
   make_script:
     - cd bitcoin-core
     - cmake --build ./bld $MAKEJOBS
@@ -193,7 +193,7 @@ task:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   configure_script:
     - cd bitcoin-core
-    - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON
+    - cmake -B ./bld -DWITH_NATPMP=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON
   make_script:
     - cd bitcoin-core
     - cmake --build ./bld $MAKEJOBS
@@ -239,15 +239,19 @@ task:
     - dnf install git -y
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   install_pkgs_script:
-    - dnf install e2fsprogs ccache gcc-c++ libtool make autoconf automake libevent-devel boost-devel libdb-cxx-devel python3 qt5-qttools-devel qt5-qtbase-devel sqlite-devel qrencode-devel systemtap zeromq-devel miniupnpc-devel libnatpmp-devel -y
-  build_script:
+    - dnf install e2fsprogs ccache gcc-c++ libtool make autoconf automake libevent-devel boost-devel python3 qt5-qttools-devel qt5-qtbase-devel sqlite-devel qrencode-devel systemtap zeromq-devel miniupnpc-devel -y
+  configure_script:
     - cd bitcoin-core
-    - ./autogen.sh && ./configure --enable-suppress-external-warnings --with-incompatible-bdb
-    - make -j 9
-  test_script:
+    - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON -DWITH_ZMQ=ON -DWITH_USDT=ON -DWITH_MINIUPNPC=ON -DWITH_NATPMP=ON
+  make_script:
     - cd bitcoin-core
-    - make -j 9 check
-    - ./test/functional/test_runner.py -j 9 --timeout-factor=5
+    - cmake --build ./bld $MAKEJOBS
+  check_script:
+    - cd bitcoin-core
+    - ctest --test-dir ./bld ${MAKEJOBS}
+  functional_test_script:
+    - cd bitcoin-core
+    - ./bld/test/functional/test_runner.py $MAKEJOBS --ci --extended --combinedlogslen=199999000 --quiet --failfast --timeout-factor=5
 task:
   name: "fuzz, asan, system libs [fedora]"
   container:

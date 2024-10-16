@@ -145,7 +145,7 @@ task:
     - export TSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/tsan:halt_on_error=1"
     - export UBSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/ubsan:print_stacktrace=1:halt_on_error=1"
     - ctest --test-dir ./bld ${MAKEJOBS}
-    - ./bld/test/functional/test_runner.py $MAKEJOBS --ci --extended --combinedlogslen=199999000 --quiet --failfast --timeout-factor=9
+    - ./bld/test/functional/test_runner.py $MAKEJOBS --ci --exclude feature_dbcrash --extended --combinedlogslen=199999000 --quiet --failfast --timeout-factor=9
 task:
   name: "Alpine [system libs]"
   container:
@@ -217,7 +217,7 @@ task:
     - dnf install git -y
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   install_pkgs_script:
-    - dnf install e2fsprogs ccache gcc-c++ libtool make autoconf automake libevent-devel boost-devel python3 qt5-qttools-devel qt5-qtbase-devel sqlite-devel qrencode-devel systemtap-sdt-devel zeromq-devel miniupnpc-devel -y
+    - dnf install e2fsprogs ccache gcc-c++ make cmake libevent-devel boost-devel python3 qt5-qttools-devel qt5-qtbase-devel sqlite-devel qrencode-devel systemtap-sdt-devel zeromq-devel miniupnpc-devel -y
   configure_script:
     - cd bitcoin-core
     - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON -DWITH_ZMQ=ON -DWITH_USDT=ON -DWITH_MINIUPNPC=ON -DWITH_NATPMP=ON

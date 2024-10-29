@@ -95,7 +95,7 @@ task:
     - lscpu
     - df -h
   install_script:
-    - apt update && apt install -y git && apt install -y git ccache build-essential cmake pkg-config bsdmainutils python3-zmq libevent-dev libboost-dev qttools5-dev qttools5-dev-tools systemtap-sdt-dev libminiupnpc-dev libqrencode-dev libzmq3-dev
+    - apt update && apt install -y git && apt install -y git ccache build-essential cmake pkg-config bsdmainutils python3-zmq libevent-dev libboost-dev qttools5-dev qttools5-dev-tools systemtap-sdt-dev libqrencode-dev libzmq3-dev
     - ccache --max-size=${CCACHE_SIZE}
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
@@ -217,10 +217,10 @@ task:
     - dnf install git -y
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   install_pkgs_script:
-    - dnf install e2fsprogs ccache gcc-c++ make cmake libevent-devel boost-devel python3 qt5-qttools-devel qt5-qtbase-devel sqlite-devel qrencode-devel systemtap-sdt-devel zeromq-devel miniupnpc-devel -y
+    - dnf install e2fsprogs ccache gcc-c++ make cmake libevent-devel boost-devel python3 qt5-qttools-devel qt5-qtbase-devel sqlite-devel qrencode-devel systemtap-sdt-devel zeromq-devel -y
   configure_script:
     - cd bitcoin-core
-    - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON -DWITH_ZMQ=ON -DWITH_USDT=ON -DWITH_MINIUPNPC=ON
+    - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON -DWITH_ZMQ=ON -DWITH_USDT=ON
   make_script:
     - cd bitcoin-core
     - cmake --build ./bld $MAKEJOBS

@@ -95,7 +95,7 @@ task:
     - lscpu
     - df -h
   install_script:
-    - apt update && apt install -y git && apt install -y git ccache build-essential cmake pkg-config bsdmainutils python3-zmq libevent-dev libboost-dev qttools5-dev qttools5-dev-tools systemtap-sdt-dev libqrencode-dev libzmq3-dev
+    - apt update && apt install -y git && apt install -y git ccache build-essential cmake pkg-config python3-zmq libevent-dev libboost-dev qttools5-dev qttools5-dev-tools systemtap-sdt-dev libqrencode-dev libzmq3-dev
     - ccache --max-size=${CCACHE_SIZE}
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
@@ -261,26 +261,3 @@ task:
     - export TSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/tsan:halt_on_error=1"
     - export UBSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/ubsan:print_stacktrace=1:halt_on_error=1"
     - ./bld/test/fuzz/test_runner.py $MAKEJOBS -l DEBUG ../qa-assets/fuzz_corpora/
-task:
-  name: "Android [no cache]"
-  container:
-    image: ubuntu:jammy
-    cpu: 2
-    memory: 8G
-    greedy: true
-  env:
-    FILE_ENV: "./ci/test/00_setup_env_android.sh"
-    MAKEJOBS: "-j10"
-    DANGER_RUN_CI_ON_HOST: "1"
-    TEST_RUNNER_PORT_MIN: "14000"  # Must be larger than 12321, which is used for the http cache. See https://cirrus-ci.org/guide/writing-tasks/#http-cache
-    CCACHE_SIZE: "200M"
-    CCACHE_DIR: "/tmp/ccache_dir"
-  ccache_cache:
-    folder: "/tmp/ccache_dir"
-  upstream_clone_script:
-    - apt update && apt install python3 rsync git -y
-    - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
-    - cd bitcoin-core
-  ci_script:
-    - cd bitcoin-core
-    - ./ci/test_run_all.sh

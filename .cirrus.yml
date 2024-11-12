@@ -187,7 +187,7 @@ task:
   ccache_cache:
     folder: "/tmp/ccache_dir"
   install_script:
-    - pacman --noconfirm -Syu e2fsprogs cmake git gcc make pkg-config python3 boost libevent zeromq ccache qt5 qrencode
+    - pacman --noconfirm -Syu e2fsprogs cmake git gcc make python3 boost libevent zeromq ccache qt5 qrencode
     - ccache --max-size=${CCACHE_SIZE}
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core

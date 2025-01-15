@@ -15,14 +15,13 @@ task:
     memory: 8G
   env:
     MAKEJOBS: "-j4"
-    CCACHE_SIZE: "200M"
+    CCACHE_MAXSIZE: "200M"
     CCACHE_COMPRESS: 1
     CCACHE_DIR: "/tmp/ccache_dir"
   ccache_cache:
     folder: "/tmp/ccache_dir"
   install_script:
     - pkg install -y e2fsprogs m4 autoconf automake libtool pkgconf cmake boost-libs git gmake libevent python3 ccache sqlite3 databases/py-sqlite3 libzmq4 net/py-pyzmq
-    - ccache --max-size=${CCACHE_SIZE}
     - git clone https://github.com/stewartsmith/libeatmydata.git
     - cd libeatmydata
     - autoreconf -i
@@ -53,14 +52,13 @@ task:
   env:
     MAKEJOBS: "-j6"
     TEST_RUNNER_PORT_MIN: "14000"  # Must be larger than 12321, which is used for the http cache. See https://cirrus-ci.org/guide/writing-tasks/#http-cache
-    CCACHE_SIZE: "200M"
+    CCACHE_MAXSIZE: "200M"
     CCACHE_DIR: "/tmp/ccache_dir"
   ccache_cache:
     folder: "/tmp/ccache_dir"
   install_script:
     - zypper --non-interactive install -t pattern devel_basis
     - zypper --non-interactive install e2fsprogs git pkg-config cmake python3 libevent-devel libboost_headers-devel gcc-c++ ccache zeromq-devel libqt5-qtbase-devel libqt5-qttools-devel qrencode-devel sqlite3-devel
-    - ccache --max-size=${CCACHE_SIZE}
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   configure_script:
@@ -84,7 +82,7 @@ task:
   env:
     MAKEJOBS: "-j6"  # Reduce jobs to avoid OOM under gcc
     TEST_RUNNER_PORT_MIN: "14000"  # Must be larger than 12321, which is used for the http cache. See https://cirrus-ci.org/guide/writing-tasks/#http-cache
-    CCACHE_SIZE: "200M"
+    CCACHE_MAXSIZE: "400M"
     CCACHE_DIR: "/tmp/ccache_dir"
   ccache_cache:
     folder: "/tmp/ccache_dir"
@@ -96,7 +94,6 @@ task:
     - df -h
   install_script:
     - apt update && apt install -y git && apt install -y git ccache build-essential cmake pkg-config python3-zmq libevent-dev libboost-dev qttools5-dev qttools5-dev-tools systemtap-sdt-dev libqrencode-dev libzmq3-dev
-    - ccache --max-size=${CCACHE_SIZE}
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
     - cd bitcoin-core
@@ -154,13 +151,12 @@ task:
     LC_ALL: "C"
     MAKEJOBS: "-j8"
     TEST_RUNNER_PORT_MIN: "14000"  # Must be larger than 12321, which is used for the http cache. See https://cirrus-ci.org/guide/writing-tasks/#http-cache
-    CCACHE_SIZE: "200M"
+    CCACHE_MAXSIZE: "200M"
     CCACHE_DIR: "/tmp/ccache_dir"
   ccache_cache:
     folder: "/tmp/ccache_dir"
   install_script:
     - apk --no-cache --update add e2fsprogs-extra cmake g++ gcc git make pkgconfig python3 boost-dev libevent-dev zeromq-dev qt5-qtbase-dev qt5-qttools-dev ccache libqrencode-dev
-    - ccache --max-size=${CCACHE_SIZE}
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   configure_script:
@@ -182,13 +178,12 @@ task:
   env:
     MAKEJOBS: "-j8"
     TEST_RUNNER_PORT_MIN: "14000"  # Must be larger than 12321, which is used for the http cache. See https://cirrus-ci.org/guide/writing-tasks/#http-cache
-    CCACHE_SIZE: "200M"
+    CCACHE_MAXSIZE: "200M"
     CCACHE_DIR: "/tmp/ccache_dir"
   ccache_cache:
     folder: "/tmp/ccache_dir"
   install_script:
     - pacman --noconfirm -Syu e2fsprogs cmake git gcc make python3 boost libevent zeromq ccache qt5 qrencode
-    - ccache --max-size=${CCACHE_SIZE}
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   configure_script:
@@ -208,7 +203,7 @@ task:
   container:
     image: fedora:rawhide
   env:
-    CCACHE_SIZE: "200M"
+    CCACHE_MAXSIZE: "200M"
     CCACHE_DIR: "/tmp/ccache_dir"
     MAKEJOBS: "-j8"
   ccache_cache:
@@ -238,7 +233,7 @@ task:
     memory: 8G
     greedy: true
   env:
-    CCACHE_SIZE: "200M"
+    CCACHE_MAXSIZE: "400M"
     CCACHE_DIR: "/tmp/ccache_dir"
     MAKEJOBS: "-j8"
   ccache_cache:

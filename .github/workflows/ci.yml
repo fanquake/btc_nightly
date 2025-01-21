@@ -97,4 +97,6 @@ jobs:
 
       - name: Run tests (fuzz)
         if: matrix.conf.test == 'fuzz'
-        run: ./bld/test/fuzz/test_runner.py -l DEBUG -j $(nproc)
+        run: |
+          git clone https://github.com/bitcoin-core/qa-assets --depth=1
+          ./bld/test/fuzz/test_runner.py -l DEBUG -j $(nproc) ./qa-assets

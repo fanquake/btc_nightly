@@ -93,6 +93,8 @@ jobs:
       - name: Run tests (fun)
         if: matrix.conf.test == 'fun'
         run: |
+          echo TSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/tsan:halt_on_error=1:second_deadlock_stack=1" >> "$GITHUB_ENV"
+          echo UBSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/ubsan:print_stacktrace=1:halt_on_error=1:report_error_type=1" >> "$GITHUB_ENV"
           ctest --output-on-failure --stop-on-failure --test-dir ./bld -j $(nproc)
           ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --combinedlogslen=99999999 --timeout-factor=10
 

@@ -64,6 +64,7 @@ jobs:
           sudo apt-get update
           LLVM_VERSION=$(apt-cache search --names-only '^clang-[0-9]+$' | sort --version-sort | tail -1 | cut -f1 -d" " | cut -f2 -d"-" )
           echo "LLVM_VERSION=${LLVM_VERSION}" >> "$GITHUB_ENV"
+          echo "LLVM_SYMBOLIZER_PATH=/usr/bin/llvm-symbolizer-${LLVM_VERSION}" >> "$GITHUB_ENV"
           sudo apt-get install -y build-essential clang-${LLVM_VERSION} libc++-${LLVM_VERSION}-dev libc++abi-${LLVM_VERSION}-dev libboost-dev libevent-dev libsqlite3-dev libzmq3-dev systemtap-sdt-dev python3-zmq
           echo
           clang-${LLVM_VERSION} -v
@@ -99,4 +100,4 @@ jobs:
         if: matrix.conf.test == 'fuzz'
         run: |
           git clone https://github.com/bitcoin-core/qa-assets --depth=1
-          ./bld/test/fuzz/test_runner.py -l DEBUG -j $(nproc) ./qa-assets
+          ./bld/test/fuzz/test_runner.py -l DEBUG -j $(nproc) ./qa-assets/fuzz_corpora/

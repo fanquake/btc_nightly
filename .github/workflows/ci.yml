@@ -21,7 +21,7 @@ jobs:
             - bld: -DBUILD_FOR_FUZZING=OFF -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG"
               test: fun
               os: ubuntu-24.04-arm
-            - bld: -DBUILD_FOR_FUZZING=OFF -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++" -DSANITIZERS=address,float-divide-by-zero,integer,undefined 
+            - bld: -DBUILD_FOR_FUZZING=OFF -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++" -DSANITIZERS=address,float-divide-by-zero,integer,undefined
               test: fun
               os: ubuntu-24.04
             - bld: -DBUILD_FOR_FUZZING=ON  -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG"
@@ -30,13 +30,13 @@ jobs:
             - bld: -DBUILD_FOR_FUZZING=ON  -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG"
               test: fuzz
               os: ubuntu-24.04-arm
-            - bld: -DBUILD_FOR_FUZZING=ON  -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++" -DSANITIZERS=address,float-divide-by-zero,integer,undefined 
+            - bld: -DBUILD_FOR_FUZZING=ON  -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++" -DSANITIZERS=address,float-divide-by-zero,integer,undefined
               test: fuzz
               os: ubuntu-24.04
-            - bld: -DBUILD_FOR_FUZZING=OFF -DCMAKE_C_COMPILER="gcc-i" -DCMAKE_CXX_COMPILER="g++-i;-D_GLIBCXX_DEBUG;-D_GLIBCXX_DEBUG_PEDANTIC"
+            - bld: -DBUILD_FOR_FUZZING=OFF -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-D_GLIBCXX_DEBUG;-D_GLIBCXX_DEBUG_PEDANTIC"
               test: fun
               os: ubuntu-24.04
-            - bld: -DBUILD_FOR_FUZZING=ON  -DCMAKE_C_COMPILER="gcc-i" -DCMAKE_CXX_COMPILER="g++-i;-D_GLIBCXX_DEBUG;-D_GLIBCXX_DEBUG_PEDANTIC"
+            - bld: -DBUILD_FOR_FUZZING=ON  -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-D_GLIBCXX_DEBUG;-D_GLIBCXX_DEBUG_PEDANTIC"
               test: fuzz
               os: ubuntu-24.04
             - bld: -DBUILD_FOR_FUZZING=OFF -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libstdc++"
@@ -65,12 +65,17 @@ jobs:
           LLVM_VERSION=$(apt-cache search --names-only '^clang-[0-9]+$' | sort --version-sort | tail -1 | cut -f1 -d" " | cut -f2 -d"-" )
           echo "LLVM_VERSION=${LLVM_VERSION}" >> "$GITHUB_ENV"
           sudo apt-get install -y build-essential clang-${LLVM_VERSION} libc++-${LLVM_VERSION}-dev libc++abi-${LLVM_VERSION}-dev libboost-dev libevent-dev libsqlite3-dev libzmq3-dev systemtap-sdt-dev python3-zmq
+
+      - name: Install gcc
+        if: matrix.conf.os == 'ubuntu-24.04'
+        run: |
           curl --location --remote-name "https://kayari.org/gcc-latest/gcc-latest.deb"
           sudo dpkg -i gcc-latest.deb
 
       - name: Compiler versions
         run: |
           clang-${LLVM_VERSION} -v
+          echo
           /opt/gcc-latest/bin/g++ --version
 
       - name: Generate buildsystem
@@ -91,7 +96,7 @@ jobs:
         run: |
           ctest --output-on-failure --stop-on-failure --test-dir ./bld -j $(nproc)
           ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --combinedlogslen=99999999
-      
+
       - name: Run tests (fuzz)
         if: matrix.conf.test == 'fuzz'
         run: ./bld/test/fuzz/test_runner.py -l DEBUG -j $(nproc)

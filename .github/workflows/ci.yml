@@ -3,7 +3,7 @@ on:
   push:
   pull_request:
   schedule:
-    - cron: '49 04 * * 0'
+    - cron: '49 04 * * 0,3'
 
 concurrency:
   group: ${{ github.ref }}
@@ -48,6 +48,8 @@ jobs:
     name: '${{ matrix.conf.bld }} (${{ matrix.conf.os }})'
     runs-on: ${{ matrix.conf.os }}
     timeout-minutes: 360
+    container:
+      image: ubuntu:24.04
 
     steps:
       - name: Checkout Bitcoin Core repo
@@ -60,25 +62,28 @@ jobs:
           echo TSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/tsan:halt_on_error=1:second_deadlock_stack=1" >> "$GITHUB_ENV"
           echo UBSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/ubsan:print_stacktrace=1:halt_on_error=1:report_error_type=1" >> "$GITHUB_ENV"
 
-      - name: Install dependencies
+      - name: Install clang
+        if: "!contains(matrix.conf.bld, 'gcc-snapshot')"
         run: |
-          curl "https://apt.llvm.org/llvm-snapshot.gpg.key" | sudo apt-key add -
+          apt-get update && apt-get install -y software-properties-common curl
+          curl "https://apt.llvm.org/llvm-snapshot.gpg.key" | apt-key add -
           source /etc/os-release
           REPO="deb http://apt.llvm.org/${VERSION_CODENAME} llvm-toolchain-${VERSION_CODENAME} main"
-          sudo add-apt-repository -y "${REPO}"
-          sudo apt-get update
-          LLVM_VERSION=$(apt-cache search --names-only '^clang-[0-9]+$' | sort --version-sort | tail -1 | cut -f1 -d" " | cut -f2 -d"-" )
+          add-apt-repository -y "${REPO}"
+          apt-get update
+          LLVM_VERSION=$( apt-cache search --names-only '^clang-[0-9]+$' | sort --version-sort | tail -1 | cut -f1 -d" " | cut -f2 -d"-" )
           echo "LLVM_VERSION=${LLVM_VERSION}" >> "$GITHUB_ENV"
           echo "LLVM_SYMBOLIZER_PATH=/usr/bin/llvm-symbolizer-${LLVM_VERSION}" >> "$GITHUB_ENV"
-          sudo apt-get install -y build-essential clang-${LLVM_VERSION} libc++-${LLVM_VERSION}-dev libc++abi-${LLVM_VERSION}-dev libboost-dev libevent-dev libsqlite3-dev libzmq3-dev systemtap-sdt-dev python3-zmq
+          apt-get install -y clang-${LLVM_VERSION} libc++-${LLVM_VERSION}-dev libc++abi-${LLVM_VERSION}-dev build-essential libboost-dev libevent-dev libsqlite3-dev libzmq3-dev systemtap-sdt-dev python3-zmq
           echo
           clang-${LLVM_VERSION} -v
 
       - name: Install gcc
-        if: matrix.conf.os == 'ubuntu-24.04'
+        if: "contains(matrix.conf.bld, 'gcc-snapshot')"
         run: |
+          apt-get install -y build-essential libboost-dev libevent-dev libsqlite3-dev libzmq3-dev systemtap-sdt-dev python3-zmq
           curl --location --remote-name "https://kayari.org/gcc-latest/gcc-latest.deb"
-          sudo dpkg -i gcc-latest.deb
+          dpkg -i gcc-latest.deb
           echo
           /opt/gcc-latest/bin/g++ --version
 

@@ -10,7 +10,7 @@ env:
 task:
   name: "FreeBSD [system libs]"
   freebsd_instance:
-    image_family: freebsd-14-0  # https://cirrus-ci.org/guide/FreeBSD/
+    image_family: freebsd-14-2  # https://cirrus-ci.org/guide/FreeBSD/
     cpu: 2
     memory: 8G
   env:

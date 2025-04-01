@@ -104,6 +104,7 @@ jobs:
         if: matrix.conf.test == 'fun'
         run: |
           ctest --output-on-failure --stop-on-failure --test-dir ./bld -j $(nproc)
+          ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --combinedlogslen=99999999 --timeout-factor=10 feature_block  # Only run one test for now, due to ipv4 limitations/issues in some other tests
 
       - name: Run tests (fuzz)
         if: matrix.conf.test == 'fuzz'

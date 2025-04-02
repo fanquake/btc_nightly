@@ -58,7 +58,7 @@ task:
     folder: "/tmp/ccache_dir"
   install_script:
     - zypper --non-interactive install -t pattern devel_basis
-    - zypper --non-interactive install e2fsprogs git pkg-config cmake python3 libevent-devel libboost_headers-devel gcc-c++ ccache zeromq-devel libqt5-qtbase-devel libqt5-qttools-devel qrencode-devel sqlite3-devel
+    - zypper --non-interactive install e2fsprogs git pkg-config cmake python3 libevent-devel libboost_headers-devel gcc-c++ ccache zeromq-devel qt6-base-devel qt6-tools-devel qrencode-devel sqlite3-devel
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   configure_script:
@@ -93,7 +93,7 @@ task:
     - lscpu
     - df -h
   install_script:
-    - apt update && apt install -y git && apt install -y git ccache build-essential cmake pkg-config python3-zmq libevent-dev libboost-dev qttools5-dev qttools5-dev-tools systemtap-sdt-dev libqrencode-dev libzmq3-dev
+    - apt update && apt install -y git && apt install -y git ccache build-essential cmake pkg-config python3-zmq libevent-dev libboost-dev qt6-tools-dev qt6-l10n-tools qt6-base-dev systemtap-sdt-dev libqrencode-dev libzmq3-dev
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
     - cd bitcoin-core
@@ -156,7 +156,7 @@ task:
   ccache_cache:
     folder: "/tmp/ccache_dir"
   install_script:
-    - apk --no-cache --update add e2fsprogs-extra cmake g++ gcc git make pkgconfig python3 boost-dev libevent-dev zeromq-dev qt5-qtbase-dev qt5-qttools-dev ccache libqrencode-dev
+    - apk --no-cache --update add e2fsprogs-extra cmake g++ gcc git make pkgconfig python3 boost-dev libevent-dev zeromq-dev qt6-qtbase-dev qt6-qttools-dev ccache libqrencode-dev
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   configure_script:
@@ -183,7 +183,7 @@ task:
   ccache_cache:
     folder: "/tmp/ccache_dir"
   install_script:
-    - pacman --noconfirm -Syu e2fsprogs cmake git gcc make python3 boost libevent zeromq ccache qt5 qrencode
+    - pacman --noconfirm -Syu e2fsprogs cmake git gcc make python3 boost libevent zeromq ccache qt6 qrencode
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   configure_script:
@@ -212,7 +212,7 @@ task:
     - dnf install git -y
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   install_pkgs_script:
-    - dnf install e2fsprogs ccache gcc-c++ make cmake libevent-devel boost-devel python3 qt5-qttools-devel qt5-qtbase-devel sqlite-devel qrencode-devel systemtap-sdt-devel zeromq-devel -y
+    - dnf install e2fsprogs ccache gcc-c++ make cmake libevent-devel boost-devel python3 qt6-qtbase-devel qt6-qttools-devel sqlite-devel qrencode-devel systemtap-sdt-devel zeromq-devel -y
   configure_script:
     - cd bitcoin-core
     - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON -DWITH_ZMQ=ON -DWITH_USDT=ON

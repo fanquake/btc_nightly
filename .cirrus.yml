@@ -99,11 +99,11 @@ task:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
     - cd bitcoin-core
   matrix:
-    - name: "ubuntu:devel [system libs, asan, clang, sqlite-only, libc++]"
+    - name: "ubuntu:devel [system libs, asan, clang, sqlite-only, libc++, no-qt]"
       install_matrix_script:
         - apt install -y libc++abi-dev libc++-dev clang llvm libsqlite3-dev
         - cd bitcoin-core
-        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=address,integer,undefined -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++;-stdlib=libc++"
+        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=OFF -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=address,integer,undefined -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++;-stdlib=libc++"
     - name: "ubuntu:devel [system libs, asan, clang, sqlite-only]"
       install_matrix_script:
         - apt install -y clang llvm libsqlite3-dev
@@ -116,11 +116,11 @@ task:
         - echo 'nonnull-attribute:streams.h'   >> test/sanitizer_suppressions/ubsan  # runtime error: null pointer passed as argument 1, which is declared to never be null, fwrite
         - echo 'nonnull-attribute:streams.cpp' >> test/sanitizer_suppressions/ubsan  # runtime error: null pointer passed as argument 1, which is declared to never be null, fwrite
         - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=OFF -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=address,undefined -DWITH_BDB=ON -DWARN_INCOMPATIBLE_BDB=OFF -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized"
-    - name: "ubuntu:devel [system libs, tsan, clang, sqlite-only, libc++]"
+    - name: "ubuntu:devel [system libs, tsan, clang, sqlite-only, libc++, no-qt]"
       install_matrix_script:
         - apt install -y libc++abi-dev libc++-dev clang llvm libsqlite3-dev
         - cd bitcoin-core
-        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=thread -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++;-stdlib=libc++"
+        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=OFF -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=thread -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++;-stdlib=libc++"
     - name: "ubuntu:devel [system libs, tsan, clang, sqlite-only]"
       install_matrix_script:
         - apt install -y clang llvm libsqlite3-dev
@@ -130,8 +130,8 @@ task:
       install_matrix_script:
         - apt install -y libdb++-dev libsqlite3-dev
         - cd bitcoin-core
-        - echo 'race:libQt5Core' >> test/sanitizer_suppressions/tsan
-        - echo 'race:libQt5Test' >> test/sanitizer_suppressions/tsan
+        - echo 'race:libQt6Core' >> test/sanitizer_suppressions/tsan
+        - echo 'race:libQt6Test' >> test/sanitizer_suppressions/tsan
         - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=OFF -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=thread -DWITH_BDB=ON -DWARN_INCOMPATIBLE_BDB=OFF -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized"
   make_script:
     - cd bitcoin-core

@@ -58,7 +58,7 @@ task:
     folder: "/tmp/ccache_dir"
   install_script:
     - zypper --non-interactive install -t pattern devel_basis
-    - zypper remove busybox-diffutils  # Work around.  Solution 1: deinstallation of busybox-diffutils-1.37.0-33.4.noarch
+    - zypper --non-interactive remove busybox-diffutils  # Work around.  Solution 1: deinstallation of busybox-diffutils-1.37.0-33.4.noarch
     - zypper --non-interactive install e2fsprogs git pkg-config cmake python3 libevent-devel libboost_headers-devel gcc-c++ ccache zeromq-devel qt6-base-devel qt6-tools-devel qrencode-devel sqlite3-devel
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core

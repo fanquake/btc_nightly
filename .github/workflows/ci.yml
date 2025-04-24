@@ -15,37 +15,35 @@ jobs:
       fail-fast: false
       matrix:
           conf:
-            - bld: -DBUILD_FOR_FUZZING=OFF -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG" -DSANITIZERS=thread
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g1' -DAPPEND_CFLAGS='-O3 -g1'             -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG" -DSANITIZERS=thread
+              desc: "libc++ DEBUG tsan"
               test: fun
               os: ubuntu-24.04
-            - bld: -DBUILD_FOR_FUZZING=OFF -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG"
-              test: fun
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g1' -DAPPEND_CFLAGS='-O3 -g1'             -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG"
+              desc: "libc++ DEBUG ARM"
+              test: fun,fuzz
               os: ubuntu-24.04-arm
-            - bld: -DBUILD_FOR_FUZZING=OFF -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++" -DSANITIZERS=address,float-divide-by-zero,integer,undefined
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g1' -DAPPEND_CFLAGS='-O3 -g1'             -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++" -DSANITIZERS=address,float-divide-by-zero,integer,undefined
+              desc: "libc++ asan"
+              test: fun,fuzz
+              os: ubuntu-24.04
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g1 -flto' -DAPPEND_CFLAGS='-O3 -g1 -flto' -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++" -DAPPEND_LDFLAGS="-flto"
+              desc: "libc++ lto"
+              test: fun,fuzz
+              os: ubuntu-24.04
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g1 -flto' -DAPPEND_CFLAGS='-O3 -g1 -flto' -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-D_GLIBCXX_DEBUG;-D_GLIBCXX_DEBUG_PEDANTIC"
+              desc: "g++ DEBUG lto"
+              test: fun,fuzz
+              os: ubuntu-24.04
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g1 -flto' -DAPPEND_CFLAGS='-O3 -g1 -flto' -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libstdc++"
+              desc: "clang libstdc++ lto"
               test: fun
               os: ubuntu-24.04
-            - bld: -DBUILD_FOR_FUZZING=ON  -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG"
-              test: fuzz
-              os: ubuntu-24.04
-            - bld: -DBUILD_FOR_FUZZING=ON  -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG"
-              test: fuzz
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g1' -DAPPEND_CFLAGS='-O3 -g1'             -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libstdc++"
+              desc: "clang libstdc++ ARM"
+              test: fun,fuzz
               os: ubuntu-24.04-arm
-            - bld: -DBUILD_FOR_FUZZING=ON  -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++" -DSANITIZERS=address,float-divide-by-zero,integer,undefined
-              test: fuzz
-              os: ubuntu-24.04
-            - bld: -DBUILD_FOR_FUZZING=OFF -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-D_GLIBCXX_DEBUG;-D_GLIBCXX_DEBUG_PEDANTIC"
-              test: fun
-              os: ubuntu-24.04
-            - bld: -DBUILD_FOR_FUZZING=ON  -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-D_GLIBCXX_DEBUG;-D_GLIBCXX_DEBUG_PEDANTIC"
-              test: fuzz
-              os: ubuntu-24.04
-            - bld: -DBUILD_FOR_FUZZING=OFF -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libstdc++"
-              test: fun
-              os: ubuntu-24.04
-            - bld: -DBUILD_FOR_FUZZING=OFF -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libstdc++"
-              test: fun
-              os: ubuntu-24.04-arm
-    name: '${{ matrix.conf.bld }} (${{ matrix.conf.os }})'
+    name: '${{ matrix.conf.desc }} ${{ matrix.conf.test }} (${{ matrix.conf.os }})'
     runs-on: ${{ matrix.conf.os }}
     timeout-minutes: 360
     container:
@@ -101,13 +99,13 @@ jobs:
         run: cmake --build ./bld -j $(nproc)
 
       - name: Run tests (ctest+functional)
-        if: matrix.conf.test == 'fun'
+        if: contains(matrix.conf.test, 'fun')
         run: |
           ctest --output-on-failure --stop-on-failure --test-dir ./bld -j $(nproc)
           ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --combinedlogslen=99999999 --timeout-factor=10 feature_block  # Only run one test for now, due to ipv4 limitations/issues in some other tests
 
       - name: Run tests (fuzz)
-        if: matrix.conf.test == 'fuzz'
+        if: contains(matrix.conf.test, 'fuzz')
         run: |
           git clone https://github.com/bitcoin-core/qa-assets --depth=1
           ./bld/test/fuzz/test_runner.py -l DEBUG -j $(nproc) ./qa-assets/fuzz_corpora/

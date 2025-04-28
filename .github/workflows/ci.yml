@@ -35,6 +35,10 @@ jobs:
               desc: "g++ DEBUG lto"
               test: fun,fuzz
               os: ubuntu-24.04
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g2 -flto' -DAPPEND_CFLAGS='-O3 -g2 -flto'                          -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++"
+              desc: "g++ default lto"
+              test: fun,fuzz
+              os: ubuntu-24.04
             - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libstdc++"
               desc: "clang libstdc++ ARM"
               test: fun,fuzz
@@ -98,7 +102,7 @@ jobs:
         if: contains(matrix.conf.test, 'fun')
         run: |
           ctest --output-on-failure --stop-on-failure --test-dir ./bld -j $(nproc)
-          ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --combinedlogslen=99999999 --timeout-factor=10 --exclude "interface_bitcoin_cli,rpc_bind"
+          ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --combinedlogslen=99999999 --timeout-factor=10 --extended --exclude "interface_bitcoin_cli,rpc_bind"
 
       - name: Run tests (fuzz)
         if: contains(matrix.conf.test, 'fuzz')

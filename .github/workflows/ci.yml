@@ -35,8 +35,8 @@ jobs:
               desc: "g++ DEBUG lto"
               test: fun,fuzz
               os: ubuntu-24.04
-            - bld: -DAPPEND_CXXFLAGS='-O3 -g2 -flto' -DAPPEND_CFLAGS='-O3 -g2 -flto'                          -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++"
-              desc: "g++ default lto"
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g2 -flto' -DAPPEND_CFLAGS='-O3 -g2 -flto' -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++"
+              desc: "g++ debug lto"
               test: fun,fuzz
               os: ubuntu-24.04
             - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libstdc++"

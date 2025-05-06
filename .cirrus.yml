@@ -34,7 +34,7 @@ task:
     - cd bitcoin-core
   configure_script:
     - cd bitcoin-core
-    - cmake -B -DWITH_ZMQ=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DWITH_CCACHE=ON
+    - cmake -B ./bld -DWITH_ZMQ=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DWITH_CCACHE=ON
   make_script:
     - cd bitcoin-core
     - cmake --build ./bld $MAKEJOBS

@@ -32,10 +32,9 @@ task:
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
     - cd bitcoin-core
-    - gmake -C depends NO_BOOST=1 NO_LIBEVENT=1 NO_QT=1 NO_SQLITE=1 NO_ZMQ=1 NO_USDT=1
   configure_script:
     - cd bitcoin-core
-    - cmake -B ./bld -DBerkeleyDB_INCLUDE_DIR:PATH="$(pwd)/depends/$(./depends/config.guess)/include" -DWITH_BDB=ON -DWITH_ZMQ=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DWITH_CCACHE=ON
+    - cmake -B -DWITH_ZMQ=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DWITH_CCACHE=ON
   make_script:
     - cd bitcoin-core
     - cmake --build ./bld $MAKEJOBS
@@ -114,7 +113,7 @@ task:
         - cd bitcoin-core
         - echo 'nonnull-attribute:streams.h'   >> test/sanitizer_suppressions/ubsan  # runtime error: null pointer passed as argument 1, which is declared to never be null, fwrite
         - echo 'nonnull-attribute:streams.cpp' >> test/sanitizer_suppressions/ubsan  # runtime error: null pointer passed as argument 1, which is declared to never be null, fwrite
-        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=OFF -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=address,undefined -DWITH_BDB=ON -DWARN_INCOMPATIBLE_BDB=OFF -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized"
+        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=OFF -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=address,undefined -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized"
     - name: "ubuntu:devel [system libs, tsan, clang, libc++, no-qt]"
       install_matrix_script:
         - apt install -y libc++abi-dev libc++-dev clang llvm
@@ -130,7 +129,7 @@ task:
         - cd bitcoin-core
         - echo 'race:libQt6Core' >> test/sanitizer_suppressions/tsan
         - echo 'race:libQt6Test' >> test/sanitizer_suppressions/tsan
-        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=OFF -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=thread -DWITH_BDB=ON -DWARN_INCOMPATIBLE_BDB=OFF -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized"
+        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=OFF -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=thread -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized"
   make_script:
     - cd bitcoin-core
     - cmake --build ./bld $MAKEJOBS

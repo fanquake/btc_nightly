@@ -10,7 +10,57 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  tests:
+  chattr-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y e2fsprogs clang llvm cmake build-essential \
+              python3-zmq libzmq3-dev libevent-dev libboost-dev libsqlite3-dev \
+              libqrencode-dev qt6-tools-dev qt6-l10n-tools qt6-base-dev \
+              systemtap-sdt-dev
+
+      - name: Checkout Bitcoin Core repo
+        uses: actions/checkout@v4
+        with:
+          repository: bitcoin/bitcoin
+
+      - name: Generate buildsystem
+        run: |
+          cmake -B bld \
+            -DCMAKE_C_COMPILER='clang' \
+            -DCMAKE_CXX_COMPILER='clang++' \
+            -DAPPEND_CXXFLAGS='-O3 -g2' \
+            -DAPPEND_CFLAGS='-O3 -g2' \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DBUILD_GUI=ON \
+            -DBUILD_BENCH=ON \
+            -DBUILD_FUZZ_BINARY=ON \
+            -DWITH_ZMQ=ON \
+            -DWITH_USDT=ON \
+            -DWERROR=ON
+
+      - name: Build
+        run: cmake --build ./bld -j $(nproc)
+
+      - name: Prevent mutation by tests (apply chattr, ignore warnings on symlinks)
+        run: |
+          sudo chattr -R +i ./ || true
+
+      - name: Run tests (ctest+functional)
+        run: |
+          ctest --output-on-failure --stop-on-failure --test-dir ./bld -j $(nproc)
+          ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --combinedlogslen=99999999 --timeout-factor=10 --extended --exclude "interface_bitcoin_cli,rpc_bind"
+
+      - name: Run tests (fuzz)
+        run: |
+          git clone https://github.com/bitcoin-core/qa-assets --depth=1
+          ./bld/test/fuzz/test_runner.py -l DEBUG -j $(nproc) ./qa-assets/fuzz_corpora/
+
+  container-tests:
     strategy:
       fail-fast: false
       matrix:

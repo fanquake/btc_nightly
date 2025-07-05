@@ -49,6 +49,7 @@ jobs:
       - name: Prevent mutation by tests (apply chattr, ignore warnings on symlinks)
         run: |
           sudo chattr -R +i ./ || true
+          sudo chattr -R -i ./bld || true  # The build directory is allowed to be modified by tests
 
       - name: Run tests (ctest+functional)
         run: |

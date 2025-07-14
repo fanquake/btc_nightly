@@ -46,10 +46,6 @@ jobs:
       - name: Build
         run: cmake --build ./bld -j $(nproc)
 
-      - name: Clone qa-assets for fuzz tests
-        run: |
-          git clone https://github.com/bitcoin-core/qa-assets --depth=1
-
       - name: Prevent mutation by tests (apply chattr, ignore warnings on symlinks)
         run: |
           sudo chattr -R +i ./ || true
@@ -62,7 +58,8 @@ jobs:
 
       - name: Run tests (fuzz)
         run: |
-          ./bld/test/fuzz/test_runner.py -l DEBUG -j $(nproc) ./qa-assets/fuzz_corpora/
+          git clone https://github.com/bitcoin-core/qa-assets --depth=1 ./bld/qa-assets
+          ./bld/test/fuzz/test_runner.py -l DEBUG -j $(nproc) ./bld/qa-assets/fuzz_corpora/
 
   container-tests:
     strategy:

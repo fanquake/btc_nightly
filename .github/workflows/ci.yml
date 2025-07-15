@@ -10,44 +10,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  firejail-tests:
-    runs-on: ubuntu-latest
-    timeout-minutes: 120
-
-    steps:
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y firejail e2fsprogs clang llvm cmake build-essential \
-              python3-zmq libzmq3-dev libevent-dev libboost-dev libsqlite3-dev \
-              libqrencode-dev qt6-tools-dev qt6-l10n-tools qt6-base-dev \
-              systemtap-sdt-dev
-
-      - name: Checkout Bitcoin Core repo
-        uses: actions/checkout@v4
-        with:
-          repository: bitcoin/bitcoin
-
-      - name: Checkout this repository
-        uses: actions/checkout@v4
-        with:
-          path: b-c-n
-
-      - name: Generate buildsystem
-        run: python3 b-c-n/.github/firejail/run_tests.py configure
-
-      - name: Build
-        run: python3 b-c-n/.github/firejail/run_tests.py build
-
-      - name: Run unit tests
-        run: python3 b-c-n/.github/firejail/run_tests.py unit
-
-      - name: Run functional tests
-        run: python3 b-c-n/.github/firejail/run_tests.py fun
-
-      - name: Run fuzz tests
-        run: python3 b-c-n/.github/firejail/run_tests.py fuzz
-
   container-tests:
     strategy:
       fail-fast: false

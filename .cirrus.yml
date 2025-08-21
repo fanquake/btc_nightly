@@ -21,7 +21,7 @@ task:
   ccache_cache:
     folder: "/tmp/ccache_dir"
   install_script:
-    - pkg install -y e2fsprogs m4 autoconf automake libtool pkgconf cmake boost-libs git gmake libevent python3 ccache sqlite3 databases/py-sqlite3 libzmq4 net/py-pyzmq
+    - pkg install -y e2fsprogs m4 autoconf automake libtool pkgconf cmake boost-libs git gmake libevent python3 ccache sqlite3 capnproto databases/py-sqlite3 libzmq4 net/py-pyzmq
     - git clone https://github.com/stewartsmith/libeatmydata.git
     - cd libeatmydata
     - autoreconf -i
@@ -58,7 +58,7 @@ task:
   install_script:
     - zypper --non-interactive install -t pattern devel_basis
     - zypper --non-interactive remove busybox-diffutils  # Work around.  Solution 1: deinstallation of busybox-diffutils-1.37.0-33.4.noarch
-    - zypper --non-interactive install e2fsprogs git pkg-config cmake python3 libevent-devel libboost_headers-devel gcc-c++ ccache zeromq-devel qt6-base-devel qt6-tools-devel qt6-linguist-devel qrencode-devel sqlite3-devel
+    - zypper --non-interactive install e2fsprogs git pkg-config cmake python3 libevent-devel libboost_headers-devel gcc-c++ ccache zeromq-devel qt6-base-devel qt6-tools-devel qt6-linguist-devel qrencode-devel sqlite3-devel capnproto
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   configure_script:
@@ -93,7 +93,7 @@ task:
     - lscpu
     - df -h
   install_script:
-    - apt update && apt install -y git && apt install -y git ccache build-essential cmake pkg-config python3-zmq libevent-dev libboost-dev qt6-tools-dev qt6-l10n-tools qt6-base-dev systemtap-sdt-dev libqrencode-dev libzmq3-dev libsqlite3-dev ca-certificates
+    - apt update && apt install -y git && apt install -y git ccache build-essential cmake pkg-config python3-zmq libevent-dev libboost-dev qt6-tools-dev qt6-l10n-tools qt6-base-dev systemtap-sdt-dev libqrencode-dev libzmq3-dev libsqlite3-dev libcapnp-dev capnproto ca-certificates
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
     - cd bitcoin-core
@@ -154,7 +154,7 @@ task:
   ccache_cache:
     folder: "/tmp/ccache_dir"
   install_script:
-    - apk --no-cache --update add e2fsprogs-extra cmake g++ gcc git make pkgconfig python3 boost-dev libevent-dev zeromq-dev qt6-qtbase-dev qt6-qttools-dev ccache libqrencode-dev
+    - apk --no-cache --update add e2fsprogs-extra cmake g++ gcc git make pkgconfig python3 boost-dev libevent-dev zeromq-dev qt6-qtbase-dev qt6-qttools-dev ccache libqrencode-dev capnproto
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   configure_script:
@@ -181,7 +181,7 @@ task:
   ccache_cache:
     folder: "/tmp/ccache_dir"
   install_script:
-    - pacman --noconfirm -Syu e2fsprogs cmake git gcc make python3 boost libevent zeromq ccache qt6 qrencode
+    - pacman --noconfirm -Syu e2fsprogs cmake git gcc make python3 boost libevent zeromq ccache qt6 qrencode capnproto
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   configure_script:
@@ -210,7 +210,7 @@ task:
     - dnf install git -y
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   install_pkgs_script:
-    - dnf install e2fsprogs ccache gcc-c++ make cmake libevent-devel boost-devel python3 qt6-qtbase-devel qt6-qttools-devel sqlite-devel qrencode-devel systemtap-sdt-devel zeromq-devel -y
+    - dnf install e2fsprogs ccache gcc-c++ make cmake libevent-devel boost-devel python3 qt6-qtbase-devel qt6-qttools-devel sqlite-devel capnproto qrencode-devel systemtap-sdt-devel zeromq-devel -y
   configure_script:
     - cd bitcoin-core
     - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON -DWITH_ZMQ=ON -DWITH_USDT=ON
@@ -241,7 +241,7 @@ task:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
     - git clone https://github.com/bitcoin-core/qa-assets --depth=1
   install_pkgs_script:
-    - dnf install make cmake libevent-devel boost-devel sqlite-devel python3 clang llvm -y
+    - dnf install make cmake libevent-devel boost-devel sqlite-devel capnproto python3 clang llvm -y
   configure_script:
     - cd bitcoin-core
     - cmake -B ./bld -DWERROR=ON -DWITH_CCACHE=ON -DBUILD_FOR_FUZZING=ON -DSANITIZERS=fuzzer,address,integer,undefined,float-divide-by-zero -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++"

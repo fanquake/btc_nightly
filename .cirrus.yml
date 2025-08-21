@@ -102,12 +102,12 @@ task:
       install_matrix_script:
         - apt install -y libc++abi-dev libc++-dev clang llvm
         - cd bitcoin-core
-        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=OFF -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=address,integer,undefined -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++;-stdlib=libc++"
+        - cmake -B ./bld -DENABLE_IPC=OFF -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=OFF -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=address,integer,undefined -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++;-stdlib=libc++"
     - name: "ubuntu:devel [system libs, asan, clang]"
       install_matrix_script:
         - apt install -y clang llvm
         - cd bitcoin-core
-        - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=address,integer,undefined -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++"
+        - cmake -B ./bld -DENABLE_IPC=OFF -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_USDT=ON -DWITH_CCACHE=ON -DSANITIZERS=address,integer,undefined -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++"
     - name: "ubuntu:devel [system libs, asan, gcc]"
       install_matrix_script:
         - cd bitcoin-core

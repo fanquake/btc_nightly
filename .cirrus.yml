@@ -154,7 +154,7 @@ task:
   ccache_cache:
     folder: "/tmp/ccache_dir"
   install_script:
-    - apk --no-cache --update add e2fsprogs-extra cmake g++ gcc git make pkgconfig python3 boost-dev libevent-dev zeromq-dev qt6-qtbase-dev qt6-qttools-dev ccache libqrencode-dev capnproto
+    - apk --no-cache --update add e2fsprogs-extra cmake g++ gcc git make pkgconfig python3 boost-dev libevent-dev zeromq-dev qt6-qtbase-dev qt6-qttools-dev ccache libqrencode-dev capnproto-dev
   upstream_clone_script:
     - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
   configure_script:

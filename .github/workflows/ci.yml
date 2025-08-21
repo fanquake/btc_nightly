@@ -79,7 +79,7 @@ jobs:
       - name: Install gcc (Fedora)
         if: "contains(matrix.conf.bld, 'gcc-latest')"
         run: |
-          dnf install -y git cmake pkgconfig boost-devel libevent-devel sqlite-devel capnproto zeromq-devel systemtap-sdt-devel python3-zmq libstdc++
+          dnf install -y git cmake pkgconfig boost-devel libevent-devel sqlite-devel capnproto-devel zeromq-devel systemtap-sdt-devel python3-zmq libstdc++
           dnf -y copr enable jwakely/gcc-latest
           dnf -y install gcc-latest
           echo

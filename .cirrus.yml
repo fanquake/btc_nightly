@@ -87,6 +87,9 @@ task:
   ccache_cache:
     folder: "/tmp/ccache_dir"
   info_script:
+    - apt update && apt install iproute2 -y
+    - ip    route show
+    - ip -6 route show
     - free -m -h
     - nproc
     - uname --kernel-name --kernel-release

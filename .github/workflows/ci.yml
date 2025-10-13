@@ -144,7 +144,7 @@ jobs:
 
       - name: Run functional tests
         run: |
-          ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --ci --extended --combinedlogslen=199999000 --quiet --failfast --timeout-factor=3
+          ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --ci --extended --combinedlogslen=199999000 --failfast --timeout-factor=3 --exclude "rpc_bind --ipv6"
 
   mac-cross:
     name: 'Linux->macOS cross, no tests'

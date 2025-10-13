@@ -101,10 +101,9 @@ jobs:
         name: Build
         run: cmake --build ./bld -j $(nproc)
 
-      - &TESTS
-        name: Run tests (ctest+functional)
+      - name: Run tests (ctest+functional)
         if: contains(matrix.conf.test, 'fun')
-        run: |
+        run: &TESTS_RUN |
           ctest --output-on-failure --stop-on-failure --test-dir ./bld -j $(nproc)
           ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --combinedlogslen=99999999 --timeout-factor=10 --extended --exclude "interface_bitcoin_cli,rpc_bind --ipv6"
 
@@ -140,7 +139,8 @@ jobs:
 
       - *BLD
 
-      - *TESTS
+      - name: Run tests (ctest+functional)
+        run: *TESTS_RUN
 
   alpine:
     name: 'Alpine [system libs]'
@@ -167,7 +167,8 @@ jobs:
 
       - *BLD
 
-      - *TESTS
+      - name: Run tests (ctest+functional)
+        run: *TESTS_RUN
 
   archlinux:
     name: 'Arch Linux [system libs]'
@@ -194,7 +195,8 @@ jobs:
 
       - *BLD
 
-      - *TESTS
+      - name: Run tests (ctest+functional)
+        run: *TESTS_RUN
 
   fedora:
     name: 'Fedora [system libs]'
@@ -223,7 +225,8 @@ jobs:
 
       - *BLD
 
-      - *TESTS
+      - name: Run tests (ctest+functional)
+        run: *TESTS_RUN
 
   mac-cross:
     name: 'Linux->macOS cross, no tests'

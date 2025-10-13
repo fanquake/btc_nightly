@@ -142,6 +142,62 @@ jobs:
 
       - *TESTS
 
+  archlinux:
+    name: 'Arch Linux [system libs]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    container:
+      image: archlinux:latest
+
+    steps:
+      - *CHECKOUT_BC
+
+      - name: Install dependencies (pacman)
+        run: |
+          pacman --noconfirm -Syu e2fsprogs cmake git gcc make python3 boost libevent zeromq ccache qt6 qrencode capnproto
+
+      - name: Generate buildsystem
+        run: |
+          cmake -B bld \
+            -DBUILD_BENCH=ON \
+            -DBUILD_FUZZ_BINARY=ON \
+            -DWERROR=ON \
+            -DBUILD_GUI=ON \
+            -DWITH_CCACHE=ON
+
+      - *BLD
+
+      - *TESTS
+
+  fedora:
+    name: 'Fedora [system libs]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    container:
+      image: fedora:rawhide
+
+    steps:
+      - *CHECKOUT_BC
+
+      - name: Install dependencies (dnf)
+        run: |
+          dnf install -y e2fsprogs ccache gcc-c++ make cmake libevent-devel boost-devel python3 qt6-qtbase-devel qt6-qttools-devel sqlite-devel capnproto capnproto-devel qrencode-devel systemtap-sdt-devel zeromq-devel
+
+      - name: Generate buildsystem
+        run: |
+          cmake -B bld \
+            -DBUILD_BENCH=ON \
+            -DBUILD_FUZZ_BINARY=ON \
+            -DWERROR=ON \
+            -DBUILD_GUI=ON \
+            -DWITH_CCACHE=ON \
+            -DWITH_ZMQ=ON \
+            -DWITH_USDT=ON
+
+      - *BLD
+
+      - *TESTS
+
   mac-cross:
     name: 'Linux->macOS cross, no tests'
     runs-on: ubuntu-latest

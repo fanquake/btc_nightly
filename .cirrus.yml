@@ -45,34 +45,6 @@ task:
     - cd bitcoin-core
     - eatmydata ./bld/test/functional/test_runner.py $MAKEJOBS --ci --extended --combinedlogslen=19999000 --quiet --failfast --timeout-factor=20
 task:
-  name: "OpenSuse Tumbleweed [system libs]"
-  container:
-    image: opensuse/tumbleweed
-  env:
-    MAKEJOBS: "-j6"
-    TEST_RUNNER_PORT_MIN: "14000"  # Must be larger than 12321, which is used for the http cache. See https://cirrus-ci.org/guide/writing-tasks/#http-cache
-    CCACHE_MAXSIZE: "200M"
-    CCACHE_DIR: "/tmp/ccache_dir"
-  ccache_cache:
-    folder: "/tmp/ccache_dir"
-  install_script:
-    - zypper --non-interactive install -t pattern devel_basis
-    - zypper --non-interactive install e2fsprogs git pkg-config cmake python3 libevent-devel libboost_headers-devel gcc-c++ ccache zeromq-devel qt6-base-devel qt6-tools-devel qt6-linguist-devel qrencode-devel sqlite3-devel libcapnp-devel capnproto
-  upstream_clone_script:
-    - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
-  configure_script:
-    - cd bitcoin-core
-    - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON
-  make_script:
-    - cd bitcoin-core
-    - cmake --build ./bld $MAKEJOBS
-  check_script:
-    - cd bitcoin-core
-    - ctest --test-dir ./bld ${MAKEJOBS}
-  functional_test_script:
-    - cd bitcoin-core
-    - ./bld/test/functional/test_runner.py $MAKEJOBS --ci --extended --combinedlogslen=199999000 --quiet --failfast --timeout-factor=3
-task:
   container:
     image: ubuntu:devel
     cpu: 4

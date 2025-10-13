@@ -4,46 +4,8 @@ container:
   greedy: true
 timeout_in: 120m
 env:
-  TEST_RUNNER_PORT_MIN: "14000"  # Must be larger than 12321, which is used for the http cache. See https://cirrus-ci.org/guide/writing-tasks/#http-cache
   DEBIAN_FRONTEND: "noninteractive"
   CTEST_OUTPUT_ON_FAILURE: "ON"
-task:
-  name: "FreeBSD [system libs]"
-  freebsd_instance:
-    image_family: freebsd-14-2  # https://cirrus-ci.org/guide/FreeBSD/
-    cpu: 2
-    memory: 8G
-  env:
-    MAKEJOBS: "-j4"
-    CCACHE_MAXSIZE: "200M"
-    CCACHE_COMPRESS: 1
-    CCACHE_DIR: "/tmp/ccache_dir"
-  ccache_cache:
-    folder: "/tmp/ccache_dir"
-  install_script:
-    - pkg install -y e2fsprogs m4 autoconf automake libtool pkgconf cmake boost-libs git gmake libevent python3 ccache sqlite3 capnproto databases/py-sqlite3 libzmq4 net/py-pyzmq
-    - git clone https://github.com/stewartsmith/libeatmydata.git
-    - cd libeatmydata
-    - autoreconf -i
-    - ./configure
-    - sed -i -e 's/O_DSYNC/O_SYNC/g' $(git grep -l O_DSYNC)
-    - make
-    - make install  # eatmydata
-  upstream_clone_script:
-    - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
-    - cd bitcoin-core
-  configure_script:
-    - cd bitcoin-core
-    - cmake -B ./bld -DWITH_ZMQ=ON -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DWITH_CCACHE=ON
-  make_script:
-    - cd bitcoin-core
-    - cmake --build ./bld $MAKEJOBS
-  check_script:
-    - cd bitcoin-core
-    - ctest --test-dir ./bld ${MAKEJOBS}
-  functional_test_script:
-    - cd bitcoin-core
-    - eatmydata ./bld/test/functional/test_runner.py $MAKEJOBS --ci --extended --combinedlogslen=19999000 --quiet --failfast --timeout-factor=20
 task:
   container:
     image: ubuntu:devel
@@ -52,11 +14,6 @@ task:
     greedy: true
   env:
     MAKEJOBS: "-j6"  # Reduce jobs to avoid OOM under gcc
-    TEST_RUNNER_PORT_MIN: "14000"  # Must be larger than 12321, which is used for the http cache. See https://cirrus-ci.org/guide/writing-tasks/#http-cache
-    CCACHE_MAXSIZE: "400M"
-    CCACHE_DIR: "/tmp/ccache_dir"
-  ccache_cache:
-    folder: "/tmp/ccache_dir"
   info_script:
     - free -m -h
     - nproc

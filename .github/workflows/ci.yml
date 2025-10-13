@@ -97,14 +97,16 @@ jobs:
             -DWITH_USDT=ON \
             -DWERROR=ON
 
-      - name: Build
+      - &BLD
+        name: Build
         run: cmake --build ./bld -j $(nproc)
 
-      - name: Run tests (ctest+functional)
+      - &TESTS
+        name: Run tests (ctest+functional)
         if: contains(matrix.conf.test, 'fun')
         run: |
           ctest --output-on-failure --stop-on-failure --test-dir ./bld -j $(nproc)
-          ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --combinedlogslen=99999999 --timeout-factor=10 --extended --exclude "interface_bitcoin_cli,rpc_bind"
+          ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --combinedlogslen=99999999 --timeout-factor=10 --extended --exclude "interface_bitcoin_cli,rpc_bind --ipv6"
 
       - name: Run tests (fuzz)
         if: contains(matrix.conf.test, 'fuzz')
@@ -136,15 +138,9 @@ jobs:
             -DBUILD_GUI=ON \
             -DWITH_CCACHE=ON
 
-      - name: Build
-        run: cmake --build ./bld -j $( nproc )
+      - *BLD
 
-      - name: Run ctest
-        run: ctest --output-on-failure --test-dir ./bld -j $( nproc )
-
-      - name: Run functional tests
-        run: |
-          ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --ci --extended --combinedlogslen=199999000 --failfast --timeout-factor=3 --exclude "rpc_bind --ipv6"
+      - *TESTS
 
   mac-cross:
     name: 'Linux->macOS cross, no tests'

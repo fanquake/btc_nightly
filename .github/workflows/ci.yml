@@ -228,6 +228,40 @@ jobs:
       - name: Run tests (ctest+functional)
         run: *TESTS_RUN
 
+  fedora-fuzz:
+    name: 'Fedora fuzz, asan, system libs'
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    container:
+      image: fedora:rawhide
+
+    steps:
+      - *CHECKOUT_BC
+
+      - name: Install dependencies (dnf)
+        run: |
+          dnf install -y make cmake libevent-devel boost-devel sqlite-devel capnproto capnproto-devel python3 clang llvm git
+
+      - name: Generate buildsystem (fuzz)
+        run: |
+          cmake -B bld \
+            -DWERROR=ON \
+            -DWITH_CCACHE=ON \
+            -DBUILD_FOR_FUZZING=ON \
+            -DSANITIZERS=fuzzer,address,integer,undefined,float-divide-by-zero \
+            -DCMAKE_C_COMPILER="clang" \
+            -DCMAKE_CXX_COMPILER="clang++"
+
+      - *BLD
+
+      - name: Run fuzz tests
+        run: |
+          git clone https://github.com/bitcoin-core/qa-assets --depth=1 ./qa-assets
+          export LSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/lsan"
+          export TSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/tsan:halt_on_error=1"
+          export UBSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/ubsan:print_stacktrace=1:halt_on_error=1"
+          ./bld/test/fuzz/test_runner.py -j $(nproc) -l DEBUG ./qa-assets/fuzz_corpora/
+
   mac-cross:
     name: 'Linux->macOS cross, no tests'
     runs-on: ubuntu-latest

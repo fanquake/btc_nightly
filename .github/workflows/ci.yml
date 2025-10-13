@@ -142,6 +142,33 @@ jobs:
 
       - *TESTS
 
+  alpine:
+    name: 'Alpine [system libs]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    container:
+      image: alpine:latest
+
+    steps:
+      - *CHECKOUT_BC
+
+      - name: Install dependencies (apk)
+        run: |
+          apk --no-cache add e2fsprogs-extra cmake g++ gcc git make pkgconfig python3 boost-dev libevent-dev zeromq-dev qt6-qtbase-dev qt6-qttools-dev ccache libqrencode-dev capnproto-dev
+
+      - name: Generate buildsystem
+        run: |
+          cmake -B bld \
+            -DBUILD_BENCH=ON \
+            -DBUILD_FUZZ_BINARY=ON \
+            -DWERROR=ON \
+            -DBUILD_GUI=ON \
+            -DWITH_CCACHE=ON
+
+      - *BLD
+
+      - *TESTS
+
   archlinux:
     name: 'Arch Linux [system libs]'
     runs-on: ubuntu-latest

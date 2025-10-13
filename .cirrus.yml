@@ -113,34 +113,6 @@ task:
     - ctest --test-dir ./bld ${MAKEJOBS}
     - ./bld/test/functional/test_runner.py $MAKEJOBS --ci --exclude feature_dbcrash --extended --combinedlogslen=199999000 --quiet --failfast --timeout-factor=9
 task:
-  name: "Alpine [system libs]"
-  container:
-    image: alpine:latest
-  env:
-    LC_ALL: "C"
-    MAKEJOBS: "-j8"
-    TEST_RUNNER_PORT_MIN: "14000"  # Must be larger than 12321, which is used for the http cache. See https://cirrus-ci.org/guide/writing-tasks/#http-cache
-    CCACHE_MAXSIZE: "200M"
-    CCACHE_DIR: "/tmp/ccache_dir"
-  ccache_cache:
-    folder: "/tmp/ccache_dir"
-  install_script:
-    - apk --no-cache --update add e2fsprogs-extra cmake g++ gcc git make pkgconfig python3 boost-dev libevent-dev zeromq-dev qt6-qtbase-dev qt6-qttools-dev ccache libqrencode-dev capnproto-dev
-  upstream_clone_script:
-    - git clone https://github.com/bitcoin/bitcoin --depth=1 ./bitcoin-core
-  configure_script:
-    - cd bitcoin-core
-    - cmake -B ./bld -DBUILD_BENCH=ON -DBUILD_FUZZ_BINARY=ON -DWERROR=ON -DBUILD_GUI=ON -DWITH_CCACHE=ON
-  make_script:
-    - cd bitcoin-core
-    - cmake --build ./bld $MAKEJOBS
-  check_script:
-    - cd bitcoin-core
-    - ctest --test-dir ./bld ${MAKEJOBS}
-  functional_test_script:
-    - cd bitcoin-core
-    - ./bld/test/functional/test_runner.py $MAKEJOBS --ci --extended --combinedlogslen=199999000 --quiet --failfast --timeout-factor=3
-task:
   name: "fuzz, asan, system libs [fedora]"
   container:
     image: fedora:rawhide

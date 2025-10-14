@@ -113,6 +113,143 @@ jobs:
           git clone https://github.com/bitcoin-core/qa-assets --depth=1
           ./bld/test/fuzz/test_runner.py -l DEBUG -j $(nproc) ./qa-assets/fuzz_corpora/
 
+  ubuntu-devel:
+    name: 'ubuntu:devel ${{ matrix.display }}'
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    container:
+      image: ubuntu:devel
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: asan-clang-libcxx-noqt
+            display: '[system libs, asan, clang, libc++, no-qt]'
+            apt_packages: 'libc++abi-dev libc++-dev clang llvm'
+            pre_configure: ''
+            configure: |
+              cmake -B ./bld \
+                -DBUILD_BENCH=ON \
+                -DBUILD_FUZZ_BINARY=ON \
+                -DWERROR=ON \
+                -DBUILD_GUI=OFF \
+                -DWITH_USDT=ON \
+                -DWITH_CCACHE=ON \
+                -DSANITIZERS=address,integer,undefined \
+                -DCMAKE_C_COMPILER="clang" \
+                -DCMAKE_CXX_COMPILER="clang++;-stdlib=libc++"
+          - id: asan-clang
+            display: '[system libs, asan, clang]'
+            apt_packages: 'clang llvm'
+            pre_configure: ''
+            configure: |
+              cmake -B ./bld \
+                -DBUILD_BENCH=ON \
+                -DBUILD_FUZZ_BINARY=ON \
+                -DWERROR=ON \
+                -DBUILD_GUI=ON \
+                -DWITH_USDT=ON \
+                -DWITH_CCACHE=ON \
+                -DSANITIZERS=address,integer,undefined \
+                -DCMAKE_C_COMPILER="clang" \
+                -DCMAKE_CXX_COMPILER="clang++"
+          - id: asan-gcc
+            display: '[system libs, asan, gcc]'
+            apt_packages: ''
+            pre_configure: |
+              echo 'nonnull-attribute:streams.h' >> test/sanitizer_suppressions/ubsan
+              echo 'nonnull-attribute:streams.cpp' >> test/sanitizer_suppressions/ubsan
+            configure: |
+              cmake -B ./bld \
+                -DBUILD_BENCH=ON \
+                -DBUILD_FUZZ_BINARY=ON \
+                -DWERROR=OFF \
+                -DBUILD_GUI=ON \
+                -DWITH_USDT=ON \
+                -DWITH_CCACHE=ON \
+                -DSANITIZERS=address,undefined \
+                -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized"
+          - id: tsan-clang-libcxx-noqt
+            display: '[system libs, tsan, clang, libc++, no-qt]'
+            apt_packages: 'libc++abi-dev libc++-dev clang llvm'
+            pre_configure: ''
+            configure: |
+              cmake -B ./bld \
+                -DBUILD_BENCH=ON \
+                -DBUILD_FUZZ_BINARY=ON \
+                -DWERROR=ON \
+                -DBUILD_GUI=OFF \
+                -DWITH_USDT=ON \
+                -DWITH_CCACHE=ON \
+                -DSANITIZERS=thread \
+                -DCMAKE_C_COMPILER="clang" \
+                -DCMAKE_CXX_COMPILER="clang++;-stdlib=libc++"
+          - id: tsan-clang
+            display: '[system libs, tsan, clang]'
+            apt_packages: 'clang llvm'
+            pre_configure: ''
+            configure: |
+              cmake -B ./bld \
+                -DBUILD_BENCH=ON \
+                -DBUILD_FUZZ_BINARY=ON \
+                -DWERROR=ON \
+                -DBUILD_GUI=ON \
+                -DWITH_USDT=ON \
+                -DWITH_CCACHE=ON \
+                -DSANITIZERS=thread \
+                -DCMAKE_C_COMPILER="clang" \
+                -DCMAKE_CXX_COMPILER="clang++"
+          - id: tsan-gcc
+            display: '[system libs, tsan, gcc, libqt suppression]'
+            apt_packages: ''
+            pre_configure: |
+              echo 'race:libQt6Core' >> test/sanitizer_suppressions/tsan
+              echo 'race:libQt6Test' >> test/sanitizer_suppressions/tsan
+            configure: |
+              cmake -B ./bld \
+                -DBUILD_BENCH=ON \
+                -DBUILD_FUZZ_BINARY=ON \
+                -DWERROR=OFF \
+                -DBUILD_GUI=ON \
+                -DWITH_USDT=ON \
+                -DWITH_CCACHE=ON \
+                -DSANITIZERS=thread \
+                -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized"
+    env:
+      DEBIAN_FRONTEND: "noninteractive"
+    steps:
+      - *CHECKOUT_BC
+
+      - name: Install dependencies (base)
+        run: |
+          apt-get update
+          apt-get install -y git ccache build-essential cmake pkg-config python3-zmq libevent-dev libboost-dev qt6-tools-dev qt6-l10n-tools qt6-base-dev systemtap-sdt-dev libqrencode-dev libzmq3-dev libsqlite3-dev libcapnp-dev capnproto ca-certificates
+
+      - name: Install dependencies (matrix)
+        if: ${{ matrix.apt_packages != '' }}
+        run: |
+          apt-get install -y ${{ matrix.apt_packages }}
+
+      - name: Apply matrix adjustments
+        if: ${{ matrix.pre_configure != '' }}
+        run: |
+          ${{ matrix.pre_configure }}
+
+      - name: Generate buildsystem
+        run: |
+          ${{ matrix.configure }}
+
+      - *BLD
+
+      - name: Run tests (ctest+functional)
+        run: |
+          export ASAN_OPTIONS="alloc_dealloc_mismatch=0"
+          export LSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/lsan"
+          export TSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/tsan:halt_on_error=1"
+          export UBSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/ubsan:print_stacktrace=1:halt_on_error=1"
+          ctest --output-on-failure --stop-on-failure --test-dir ./bld -j $(nproc)
+          ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --combinedlogslen=99999999 --timeout-factor=10 --extended --exclude "interface_bitcoin_cli,rpc_bind --ipv6"
+
   opensuse-tumbleweed:
     name: 'OpenSUSE Tumbleweed [system libs]'
     runs-on: ubuntu-latest

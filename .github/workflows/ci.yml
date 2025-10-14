@@ -126,7 +126,7 @@ jobs:
           - id: asan-clang-libcxx-noqt
             display: '[system libs, asan, clang, libc++, no-qt]'
             apt_packages: 'libc++abi-dev libc++-dev clang llvm'
-            pre_configure: ''
+            task_adjustments: ''
             configure: |
               cmake -B ./bld \
                 -DBUILD_BENCH=ON \
@@ -141,7 +141,7 @@ jobs:
           - id: asan-clang
             display: '[system libs, asan, clang]'
             apt_packages: 'clang llvm'
-            pre_configure: ''
+            task_adjustments: ''
             configure: |
               cmake -B ./bld \
                 -DBUILD_BENCH=ON \
@@ -156,7 +156,7 @@ jobs:
           - id: asan-gcc
             display: '[system libs, asan, gcc]'
             apt_packages: ''
-            pre_configure: |
+            task_adjustments: |
               echo 'nonnull-attribute:streams.h' >> test/sanitizer_suppressions/ubsan
               echo 'nonnull-attribute:streams.cpp' >> test/sanitizer_suppressions/ubsan
             configure: |
@@ -172,7 +172,7 @@ jobs:
           - id: tsan-clang-libcxx-noqt
             display: '[system libs, tsan, clang, libc++, no-qt]'
             apt_packages: 'libc++abi-dev libc++-dev clang llvm'
-            pre_configure: ''
+            task_adjustments: ''
             configure: |
               cmake -B ./bld \
                 -DBUILD_BENCH=ON \
@@ -187,7 +187,7 @@ jobs:
           - id: tsan-clang
             display: '[system libs, tsan, clang]'
             apt_packages: 'clang llvm'
-            pre_configure: ''
+            task_adjustments: ''
             configure: |
               cmake -B ./bld \
                 -DBUILD_BENCH=ON \
@@ -202,7 +202,7 @@ jobs:
           - id: tsan-gcc
             display: '[system libs, tsan, gcc, libqt suppression]'
             apt_packages: ''
-            pre_configure: |
+            task_adjustments: |
               echo 'race:libQt6Core' >> test/sanitizer_suppressions/tsan
               echo 'race:libQt6Test' >> test/sanitizer_suppressions/tsan
             configure: |
@@ -231,9 +231,9 @@ jobs:
           apt-get install -y ${{ matrix.apt_packages }}
 
       - name: Apply matrix adjustments
-        if: ${{ matrix.pre_configure != '' }}
+        if: ${{ matrix.task_adjustments != '' }}
         run: |
-          ${{ matrix.pre_configure }}
+          ${{ matrix.task_adjustments }}
 
       - name: Generate buildsystem
         run: |

@@ -163,7 +163,6 @@ jobs:
           git clone https://github.com/bitcoin-core/qa-assets --depth=1
           ./bld/test/fuzz/test_runner.py -l DEBUG -j $(nproc) ./qa-assets/fuzz_corpora/
 
-jobs:
   ci-mutation-matrix:
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest

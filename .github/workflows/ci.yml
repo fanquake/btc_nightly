@@ -27,7 +27,7 @@ jobs:
               test: fun
               os: ubuntu-24.04
 
-            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++" -DSANITIZERS=thread -DBUILD_GUI=ON -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds -Wno-error=use-after-free"
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++" -DSANITIZERS=thread -DBUILD_GUI=ON -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds -Wno-error=use-after-free -Wno-error=sfinae-incomplete"
               task_adjustments: |
                 dnf install -y libtsan
                 echo 'race:libQt6Core' >> test/sanitizer_suppressions/tsan
@@ -54,7 +54,7 @@ jobs:
               test: fun
               os: ubuntu-24.04
 
-            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++" -DSANITIZERS=address,undefined -DBUILD_GUI=ON -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds -Wno-error=use-after-free"
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++" -DSANITIZERS=address,undefined -DBUILD_GUI=ON -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds -Wno-error=use-after-free -Wno-error=sfinae-incomplete"
               task_adjustments: |
                 dnf install -y libasan libubsan
                 echo 'nonnull-attribute:streams.h' >> test/sanitizer_suppressions/ubsan
@@ -75,7 +75,7 @@ jobs:
               test: fun,fuzz
               os: ubuntu-24.04
 
-            - bld: -DAPPEND_CXXFLAGS='-O3 -g2 -flto' -DAPPEND_CFLAGS='-O3 -g2 -flto' -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++"
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g2 -flto' -DAPPEND_CFLAGS='-O3 -g2 -flto' -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++" -DBUILD_GUI=ON -DAPPEND_CXXFLAGS="-Wno-error=sfinae-incomplete"
               task_adjustments: ''
               desc: "g++ lto"
               test: fun,fuzz

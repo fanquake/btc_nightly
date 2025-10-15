@@ -363,6 +363,100 @@ jobs:
           export UBSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/ubsan:print_stacktrace=1:halt_on_error=1"
           ./bld/test/fuzz/test_runner.py -j $(nproc) -l DEBUG ./qa-assets/fuzz_corpora/
 
+  mac-cross-intel:
+    name: 'Linux->macOS Intel cross, no tests'
+    runs-on: ubuntu-latest
+    if: ${{ vars.SKIP_BRANCH_PUSH != 'true' || github.event_name == 'pull_request' }}
+
+    env:
+      FILE_ENV: './ci/test/00_setup_env_mac_cross_intel.sh'
+      DANGER_CI_ON_HOST_FOLDERS: 1
+
+    steps:
+      - *CHECKOUT_BC
+
+      - name: Configure environment
+        uses: bitcoin/bitcoin/.github/actions/configure-environment@master
+
+      - name: Restore caches
+        id: restore-cache
+        uses: bitcoin/bitcoin/.github/actions/restore-caches@master
+
+      - name: Configure Docker
+        uses: bitcoin/bitcoin/.github/actions/configure-docker@master
+        with:
+          cache-provider: 'gha'
+
+      - name: CI script
+        run: |
+          ./ci/test_run_all.sh
+
+      - name: Save caches
+        uses: bitcoin/bitcoin/.github/actions/save-caches@master
+
+      - name: Upload built executables
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-cross-intel-executables-${{ github.run_id }}
+          path: |
+            ${{ env.BASE_BUILD_DIR }}/bin/*
+            ${{ env.BASE_BUILD_DIR }}/src/secp256k1/bin/*
+            ${{ env.BASE_BUILD_DIR }}/src/univalue/*
+            ${{ env.BASE_BUILD_DIR }}/test/config.ini
+
+  mac-native-test-intel-rosetta-2:
+    name: 'macOS, test cross-built Intel on Rosetta 2'
+    runs-on: macos-26  # Last release with Intel support, but GHA only offers Rosetta 2
+    needs: mac-cross-intel
+
+    env:
+      TEST_RUNNER_TIMEOUT_FACTOR: 40
+
+    steps:
+      - *CHECKOUT_BC
+
+      - name: Download built executables
+        uses: actions/download-artifact@v4
+        with:
+          name: mac-cross-intel-executables-${{ github.run_id }}
+
+      - name: Ensure downloaded binaries are executable
+        run: chmod -R +x ./bin ./src/secp256k1/bin ./src/univalue
+
+      - name: Run bitcoind
+        run: ./bin/bitcoind -version
+
+      - name: Run unit tests
+        run: |
+          ./bin/test_bitcoin -l test_suite
+          ./src/secp256k1/bin/exhaustive_tests
+          ./src/secp256k1/bin/noverify_tests
+          ./src/secp256k1/bin/tests
+          ./src/univalue/object
+          ./src/univalue/unitester
+
+      - name: Run benchmarks
+        run: ./bin/bench_bitcoin -sanity-check
+
+      - name: Adjust paths in test/config.ini
+        run: |
+          sed -i '' "s|^SRCDIR=.*|SRCDIR=${{ github.workspace }}|" test/config.ini
+          sed -i '' "s|^BUILDDIR=.*|BUILDDIR=${{ github.workspace }}|" test/config.ini
+          sed -i '' "s|^RPCAUTH=.*|RPCAUTH=${{ github.workspace }}/share/rpcauth/rpcauth.py|" test/config.ini
+          cat test/config.ini
+
+      - name: Set previous release directory
+        run: |
+          echo "PREVIOUS_RELEASES_DIR=${{ runner.temp }}/previous_releases" >> "$GITHUB_ENV"
+
+      - name: Get previous releases
+        run: ./test/get_previous_releases.py --target-dir $PREVIOUS_RELEASES_DIR
+
+      - name: Run functional tests
+        env:
+          TEST_RUNNER_EXTRA: ${{ github.event_name != 'pull_request' && '--extended' || '' }}
+        run: python3 test/functional/test_runner.py --jobs $(sysctl -n hw.ncpu) --ci --quiet --tmpdirprefix="$RUNNER_TEMP" --combinedlogslen=99999999 --timeout-factor=$TEST_RUNNER_TIMEOUT_FACTOR $TEST_RUNNER_EXTRA
+
   mac-cross:
     name: 'Linux->macOS cross, no tests'
     runs-on: ubuntu-latest

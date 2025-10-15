@@ -163,6 +163,57 @@ jobs:
           git clone https://github.com/bitcoin-core/qa-assets --depth=1
           ./bld/test/fuzz/test_runner.py -l DEBUG -j $(nproc) ./qa-assets/fuzz_corpora/
 
+jobs:
+  ci-mutation-matrix:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    env:
+      CI_FAILFAST_TEST_LEAVE_DANGLING: 1  # GHA does not care about dangling processes and setting this variable avoids killing the CI script itself on error
+      FILE_ENV: ${{ matrix.file-env }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: 'msan -O0'
+            file-env: './ci/test/00_setup_env_native_msan.sh'
+            clone-qa-assets: false
+            task_adjustments: |
+              sed -i 's/-O1/-O0/g' ${{ matrix.file-env }}
+              git --no-pager diff
+          - name: 'fuzz msan -O0'
+            file-env: './ci/test/00_setup_env_native_fuzz_with_msan.sh'
+            clone-qa-assets: true
+            task_adjustments: |
+              sed -i 's/-O1/-O0/g' ${{ matrix.file-env }}
+              git --no-pager diff
+
+    steps:
+      - *CHECKOUT_BC
+
+      - name: Maybe checkout qa-assets
+        if: ${{ fromJSON(matrix.clone-qa-assets || 'false') }}
+        uses: actions/checkout@v5
+        with:
+          path: qa-assets
+          fetch-depth: 1
+
+      - name: Maybe move qa-assets
+        if: ${{ fromJSON(matrix.clone-qa-assets || 'false') }}
+        run: |
+          mkdir -p ./ci/scratch/qa-assets
+          mv ./qa-assets/{.git,fuzz_corpora} ./ci/scratch/qa-assets/
+
+      - name: Apply matrix adjustments
+        if: ${{ matrix.task_adjustments != '' }}
+        run: |
+          ${{ matrix.task_adjustments }}
+
+      - name: CI script
+        run: ./ci/test_run_all.sh
+
   opensuse-tumbleweed:
     name: 'OpenSUSE Tumbleweed [system libs]'
     runs-on: ubuntu-latest

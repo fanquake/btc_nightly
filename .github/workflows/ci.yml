@@ -18,7 +18,7 @@ jobs:
             - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG" -DSANITIZERS=thread
               task_adjustments: ''
               desc: "libc++ DEBUG tsan"
-              test: fun
+              test: fun,fuzz
               os: ubuntu-24.04
 
             - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION}" -DSANITIZERS=thread -DBUILD_GUI=ON

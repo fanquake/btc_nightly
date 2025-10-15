@@ -16,33 +16,75 @@ jobs:
       matrix:
           conf:
             - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG" -DSANITIZERS=thread
+              task_adjustments: ''
               desc: "libc++ DEBUG tsan"
               test: fun
               os: ubuntu-24.04
+
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION}" -DSANITIZERS=thread -DBUILD_GUI=ON
+              task_adjustments: ''
+              desc: "clang tsan + gui"
+              test: fun
+              os: ubuntu-24.04
+
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++" -DSANITIZERS=thread -DBUILD_GUI=ON -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds -Wno-error=use-after-free"
+              task_adjustments: |
+                echo 'race:libQt6Core' >> test/sanitizer_suppressions/tsan
+                echo 'race:libQt6Test' >> test/sanitizer_suppressions/tsan
+              desc: "g++ tsan + gui"
+              test: fun
+              os: ubuntu-24.04
+
             - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG"
+              task_adjustments: ''
               desc: "libc++ DEBUG ARM"
               test: fun,fuzz
               os: ubuntu-24.04-arm
+
             - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-funsigned-char" -DSANITIZERS=address,float-divide-by-zero,integer,undefined
+              task_adjustments: ''
               desc: "libc++ asan -funsigned-char"
               test: fun,fuzz
               os: ubuntu-24.04
+
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-funsigned-char" -DSANITIZERS=address,float-divide-by-zero,integer,undefined -DBUILD_GUI=ON
+              task_adjustments: ''
+              desc: "clang asan -funsigned-char + gui"
+              test: fun
+              os: ubuntu-24.04
+
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++" -DSANITIZERS=address,undefined -DBUILD_GUI=ON -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds -Wno-error=use-after-free"
+              task_adjustments: |
+                echo 'nonnull-attribute:streams.h' >> test/sanitizer_suppressions/ubsan
+                echo 'nonnull-attribute:streams.cpp' >> test/sanitizer_suppressions/ubsan
+              desc: "g++ asan + gui"
+              test: fun,fuzz
+              os: ubuntu-24.04
+
             - bld: -DAPPEND_CXXFLAGS='-O3 -g2 -flto' -DAPPEND_CFLAGS='-O3 -g2 -flto' -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++" -DAPPEND_LDFLAGS="-flto"
+              task_adjustments: ''
               desc: "libc++ lto"
               test: fun,fuzz
               os: ubuntu-24.04
+
             - bld: -DAPPEND_CXXFLAGS='-O3 -g2 -flto' -DAPPEND_CFLAGS='-O3 -g2 -flto' -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++;-D_GLIBCXX_DEBUG;-D_GLIBCXX_DEBUG_PEDANTIC"
+              task_adjustments: ''
               desc: "g++ DEBUG lto"
               test: fun,fuzz
               os: ubuntu-24.04
+
             - bld: -DAPPEND_CXXFLAGS='-O3 -g2 -flto' -DAPPEND_CFLAGS='-O3 -g2 -flto' -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++"
-              desc: "g++ debug lto"
+              task_adjustments: ''
+              desc: "g++ lto"
               test: fun,fuzz
               os: ubuntu-24.04
+
             - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libstdc++"
+              task_adjustments: ''
               desc: "clang libstdc++ ARM"
               test: fun,fuzz
               os: ubuntu-24.04-arm
+
     name: '${{ matrix.conf.desc }} ${{ matrix.conf.test }}'
     runs-on: ${{ matrix.conf.os }}
     timeout-minutes: 360
@@ -59,6 +101,7 @@ jobs:
 
       - name: Set sanitizer suppressions (only for ctest+functional)
         run: |
+          echo LSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/lsan" >> "$GITHUB_ENV"
           echo TSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/tsan:halt_on_error=1:second_deadlock_stack=1" >> "$GITHUB_ENV"
           echo UBSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/ubsan:print_stacktrace=1:halt_on_error=1:report_error_type=1" >> "$GITHUB_ENV"
 
@@ -74,18 +117,23 @@ jobs:
           LLVM_VERSION=$( apt-cache search --names-only '^clang-[0-9]+$' | sort --version-sort | tail -1 | cut -f1 -d" " | cut -f2 -d"-" )
           echo "LLVM_VERSION=${LLVM_VERSION}" >> "$GITHUB_ENV"
           echo "LLVM_SYMBOLIZER_PATH=/usr/bin/llvm-symbolizer-${LLVM_VERSION}" >> "$GITHUB_ENV"
-          apt-get install -y clang-${LLVM_VERSION} libc++-${LLVM_VERSION}-dev libc++abi-${LLVM_VERSION}-dev git cmake pkg-config build-essential libboost-dev libevent-dev libsqlite3-dev libcapnp-dev capnproto libzmq3-dev systemtap-sdt-dev python3-zmq
+          apt-get install -y clang-${LLVM_VERSION} libc++-${LLVM_VERSION}-dev libc++abi-${LLVM_VERSION}-dev git cmake pkg-config build-essential libboost-dev libevent-dev libsqlite3-dev libcapnp-dev capnproto libzmq3-dev ccache qt6-tools-dev qt6-l10n-tools qt6-base-dev libqrencode-dev systemtap-sdt-dev python3-zmq
           echo
           clang-${LLVM_VERSION} -v
 
       - name: Install gcc (Fedora)
         if: "contains(matrix.conf.bld, 'gcc-latest')"
         run: |
-          dnf install -y git cmake pkgconfig boost-devel libevent-devel sqlite-devel capnproto capnproto-devel zeromq-devel systemtap-sdt-devel python3-zmq libstdc++
+          dnf install -y git cmake pkgconfig boost-devel libevent-devel sqlite-devel capnproto capnproto-devel zeromq-devel ccache qt6-qttools-devel qt6-qtbase-devel qrencode-devel systemtap-sdt-devel python3-zmq libstdc++
           dnf -y copr enable jwakely/gcc-latest
           dnf -y install gcc-latest
           echo
           /opt/gcc-latest/bin/g++ --version
+
+      - name: Apply matrix adjustments
+        if: ${{ matrix.conf.task_adjustments != '' }}
+        run: |
+          ${{ matrix.conf.task_adjustments }}
 
       - name: Generate buildsystem
         run: >
@@ -112,143 +160,6 @@ jobs:
         run: |
           git clone https://github.com/bitcoin-core/qa-assets --depth=1
           ./bld/test/fuzz/test_runner.py -l DEBUG -j $(nproc) ./qa-assets/fuzz_corpora/
-
-  ubuntu-devel:
-    name: 'ubuntu:devel ${{ matrix.display }}'
-    runs-on: ubuntu-latest
-    timeout-minutes: 360
-    container:
-      image: ubuntu:devel
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - id: asan-clang-libcxx-noqt
-            display: '[system libs, asan, clang, libc++, no-qt]'
-            apt_packages: 'libc++abi-dev libc++-dev clang llvm'
-            task_adjustments: ''
-            configure: |
-              cmake -B ./bld \
-                -DBUILD_BENCH=ON \
-                -DBUILD_FUZZ_BINARY=ON \
-                -DWERROR=ON \
-                -DBUILD_GUI=OFF \
-                -DWITH_USDT=ON \
-                -DWITH_CCACHE=ON \
-                -DSANITIZERS=address,integer,undefined \
-                -DCMAKE_C_COMPILER="clang" \
-                -DCMAKE_CXX_COMPILER="clang++;-stdlib=libc++"
-          - id: asan-clang
-            display: '[system libs, asan, clang]'
-            apt_packages: 'clang llvm'
-            task_adjustments: ''
-            configure: |
-              cmake -B ./bld \
-                -DBUILD_BENCH=ON \
-                -DBUILD_FUZZ_BINARY=ON \
-                -DWERROR=ON \
-                -DBUILD_GUI=ON \
-                -DWITH_USDT=ON \
-                -DWITH_CCACHE=ON \
-                -DSANITIZERS=address,integer,undefined \
-                -DCMAKE_C_COMPILER="clang" \
-                -DCMAKE_CXX_COMPILER="clang++"
-          - id: asan-gcc
-            display: '[system libs, asan, gcc]'
-            apt_packages: ''
-            task_adjustments: |
-              echo 'nonnull-attribute:streams.h' >> test/sanitizer_suppressions/ubsan
-              echo 'nonnull-attribute:streams.cpp' >> test/sanitizer_suppressions/ubsan
-            configure: |
-              cmake -B ./bld \
-                -DBUILD_BENCH=ON \
-                -DBUILD_FUZZ_BINARY=ON \
-                -DWERROR=OFF \
-                -DBUILD_GUI=ON \
-                -DWITH_USDT=ON \
-                -DWITH_CCACHE=ON \
-                -DSANITIZERS=address,undefined \
-                -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized"
-          - id: tsan-clang-libcxx-noqt
-            display: '[system libs, tsan, clang, libc++, no-qt]'
-            apt_packages: 'libc++abi-dev libc++-dev clang llvm'
-            task_adjustments: ''
-            configure: |
-              cmake -B ./bld \
-                -DBUILD_BENCH=ON \
-                -DBUILD_FUZZ_BINARY=ON \
-                -DWERROR=ON \
-                -DBUILD_GUI=OFF \
-                -DWITH_USDT=ON \
-                -DWITH_CCACHE=ON \
-                -DSANITIZERS=thread \
-                -DCMAKE_C_COMPILER="clang" \
-                -DCMAKE_CXX_COMPILER="clang++;-stdlib=libc++"
-          - id: tsan-clang
-            display: '[system libs, tsan, clang]'
-            apt_packages: 'clang llvm'
-            task_adjustments: ''
-            configure: |
-              cmake -B ./bld \
-                -DBUILD_BENCH=ON \
-                -DBUILD_FUZZ_BINARY=ON \
-                -DWERROR=ON \
-                -DBUILD_GUI=ON \
-                -DWITH_USDT=ON \
-                -DWITH_CCACHE=ON \
-                -DSANITIZERS=thread \
-                -DCMAKE_C_COMPILER="clang" \
-                -DCMAKE_CXX_COMPILER="clang++"
-          - id: tsan-gcc
-            display: '[system libs, tsan, gcc, libqt suppression]'
-            apt_packages: ''
-            task_adjustments: |
-              echo 'race:libQt6Core' >> test/sanitizer_suppressions/tsan
-              echo 'race:libQt6Test' >> test/sanitizer_suppressions/tsan
-            configure: |
-              cmake -B ./bld \
-                -DBUILD_BENCH=ON \
-                -DBUILD_FUZZ_BINARY=ON \
-                -DWERROR=OFF \
-                -DBUILD_GUI=ON \
-                -DWITH_USDT=ON \
-                -DWITH_CCACHE=ON \
-                -DSANITIZERS=thread \
-                -DAPPEND_CXXFLAGS="-Wno-error=maybe-uninitialized"
-    env:
-      DEBIAN_FRONTEND: "noninteractive"
-    steps:
-      - *CHECKOUT_BC
-
-      - name: Install dependencies (base)
-        run: |
-          apt-get update
-          apt-get install -y git ccache build-essential cmake pkg-config python3-zmq libevent-dev libboost-dev qt6-tools-dev qt6-l10n-tools qt6-base-dev systemtap-sdt-dev libqrencode-dev libzmq3-dev libsqlite3-dev libcapnp-dev capnproto ca-certificates
-
-      - name: Install dependencies (matrix)
-        if: ${{ matrix.apt_packages != '' }}
-        run: |
-          apt-get install -y ${{ matrix.apt_packages }}
-
-      - name: Apply matrix adjustments
-        if: ${{ matrix.task_adjustments != '' }}
-        run: |
-          ${{ matrix.task_adjustments }}
-
-      - name: Generate buildsystem
-        run: |
-          ${{ matrix.configure }}
-
-      - *BLD
-
-      - name: Run tests (ctest+functional)
-        run: |
-          export ASAN_OPTIONS="alloc_dealloc_mismatch=0"
-          export LSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/lsan"
-          export TSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/tsan:halt_on_error=1"
-          export UBSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/ubsan:print_stacktrace=1:halt_on_error=1"
-          ctest --output-on-failure --stop-on-failure --test-dir ./bld -j $(nproc)
-          ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --combinedlogslen=99999999 --timeout-factor=10 --extended --exclude "interface_bitcoin_cli,rpc_bind --ipv6"
 
   opensuse-tumbleweed:
     name: 'OpenSUSE Tumbleweed [system libs]'

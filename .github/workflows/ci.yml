@@ -75,7 +75,7 @@ jobs:
               test: fun,fuzz
               os: ubuntu-24.04
 
-            - bld: -DAPPEND_CXXFLAGS='-O3 -g2 -flto' -DAPPEND_CFLAGS='-O3 -g2 -flto' -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++" -DBUILD_GUI=ON -DAPPEND_CXXFLAGS="-O3 -g2 -Wno-error=sfinae-incomplete"
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g2 -flto' -DAPPEND_CFLAGS='-O3 -g2 -flto' -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++" -DBUILD_GUI=ON -DAPPEND_CXXFLAGS="-O3 -g2 -flto -Wno-error=sfinae-incomplete"
               task_adjustments: ''
               desc: "g++ lto"
               test: fun,fuzz
@@ -197,6 +197,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           path: qa-assets
+          repository: bitcoin-core/qa-assets
           fetch-depth: 1
 
       - name: Maybe move qa-assets

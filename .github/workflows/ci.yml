@@ -176,37 +176,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: 'tsan+1'
-            file-env: './ci/test/00_setup_env_native_tsan.sh'
-            clone-qa-assets: false
-            task_adjustments: |
-              sed -i --regexp-extended 's/(export APT_LLVM_V=")([0-9]+)"/echo "\1$((\2+1))\""/e' $FILE_ENV
-              git --no-pager diff
-          - name: 'asan+1'
-            file-env: './ci/test/00_setup_env_native_asan.sh'
-            clone-qa-assets: false
-            task_adjustments: |
-              sed -i --regexp-extended 's/(export APT_LLVM_V=")([0-9]+)"/echo "\1$((\2+1))\""/e' $FILE_ENV
-              git --no-pager diff
-          - name: 'fuzz+1'
-            file-env: './ci/test/00_setup_env_native_fuzz.sh'
-            clone-qa-assets: true
-            task_adjustments: |
-              sed -i --regexp-extended 's/(export APT_LLVM_V=")([0-9]+)"/echo "\1$((\2+1))\""/e' $FILE_ENV
-              git --no-pager diff
           - name: 'msan -O0'
             file-env: './ci/test/00_setup_env_native_msan.sh'
             clone-qa-assets: false
             task_adjustments: |
               sed -i 's/-O1/-O0/g' $FILE_ENV
-              sed -i --regexp-extended 's/(export APT_LLVM_V=")([0-9]+)"/echo "\1$((\2+1))\""/e' $FILE_ENV
               git --no-pager diff
           - name: 'fuzz msan -O0'
             file-env: './ci/test/00_setup_env_native_fuzz_with_msan.sh'
             clone-qa-assets: true
             task_adjustments: |
               sed -i 's/-O1/-O0/g' $FILE_ENV
-              sed -i --regexp-extended 's/(export APT_LLVM_V=")([0-9]+)"/echo "\1$((\2+1))\""/e' $FILE_ENV
               git --no-pager diff
 
     steps:

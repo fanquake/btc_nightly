@@ -178,7 +178,6 @@ jobs:
         include:
           - name: 'msan -O0'
             file-env: './ci/test/00_setup_env_native_msan.sh'
-            clone-qa-assets: false
             task_adjustments: |
               sed -i 's/-O1/-O0/g' $FILE_ENV
               sed -i '/^export CI_LIMIT_STACK_SIZE=1$/d' $FILE_ENV
@@ -186,27 +185,23 @@ jobs:
               echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
           - name: 'fuzz msan -O0'
             file-env: './ci/test/00_setup_env_native_fuzz_with_msan.sh'
-            clone-qa-assets: true
             task_adjustments: |
               sed -i 's/-O1/-O0/g' $FILE_ENV
               git --no-pager diff
+          - name: 'fuzz valgrind'
+            file-env: './ci/test/00_setup_env_native_fuzz_with_valgrind.sh'
+            task_adjustments: ''
+          - name: 'valgrind'
+            file-env: './ci/test/00_setup_env_native_valgrind.sh'
+            task_adjustments: ''
+          - name: 's390x'
+            file-env: './ci/test/00_setup_env_s390x.sh'
+            task_adjustments: |
+              echo 'export RUN_FUZZ_TESTS=true' >> $FILE_ENV
+
 
     steps:
       - *CHECKOUT_BC
-
-      - name: Maybe checkout qa-assets
-        if: ${{ fromJSON(matrix.clone-qa-assets || 'false') }}
-        uses: actions/checkout@v5
-        with:
-          path: qa-assets
-          repository: bitcoin-core/qa-assets
-          fetch-depth: 1
-
-      - name: Maybe move qa-assets
-        if: ${{ fromJSON(matrix.clone-qa-assets || 'false') }}
-        run: |
-          mkdir -p ./ci/scratch/qa-assets
-          mv ./qa-assets/{.git,fuzz_corpora} ./ci/scratch/qa-assets/
 
       - name: Apply matrix adjustments
         if: ${{ matrix.task_adjustments != '' }}

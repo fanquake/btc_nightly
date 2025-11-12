@@ -243,6 +243,7 @@ jobs:
         run: |
           cmake -B bld \
             --preset=dev-mode \
+            -DWITH_USDT=OFF \
             -DWERROR=ON \
             -DWITH_CCACHE=ON
 
@@ -269,6 +270,7 @@ jobs:
         run: |
           cmake -B bld \
             --preset=dev-mode \
+            -DWITH_USDT=OFF \
             -DWERROR=ON \
             -DWITH_CCACHE=ON
 

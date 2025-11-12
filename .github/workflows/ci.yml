@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
           conf:
-            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG" -DSANITIZERS=thread
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG" -DSANITIZERS=thread -DBUILD_GUI=OFF
               task_adjustments: ''
               desc: "libc++ DEBUG tsan"
               test: fun,fuzz
@@ -36,13 +36,13 @@ jobs:
               test: fun
               os: ubuntu-24.04
 
-            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG"
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG" -DBUILD_GUI=OFF
               task_adjustments: ''
               desc: "libc++ DEBUG ARM"
               test: fun,fuzz
               os: ubuntu-24.04-arm
 
-            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-funsigned-char" -DSANITIZERS=address,float-divide-by-zero,integer,undefined
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++;-funsigned-char" -DSANITIZERS=address,float-divide-by-zero,integer,undefined -DBUILD_GUI=OFF
               task_adjustments: ''
               desc: "libc++ asan -funsigned-char"
               test: fun,fuzz
@@ -63,7 +63,7 @@ jobs:
               test: fun,fuzz
               os: ubuntu-24.04
 
-            - bld: -DAPPEND_CXXFLAGS='-O3 -g2 -flto' -DAPPEND_CFLAGS='-O3 -g2 -flto' -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++" -DAPPEND_LDFLAGS="-flto"
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g2 -flto' -DAPPEND_CFLAGS='-O3 -g2 -flto' -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="clang-${LLVM_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${LLVM_VERSION};-stdlib=libc++" -DAPPEND_LDFLAGS="-flto" -DBUILD_GUI=OFF
               task_adjustments: ''
               desc: "libc++ lto"
               test: fun,fuzz

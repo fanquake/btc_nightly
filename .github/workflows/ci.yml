@@ -141,10 +141,7 @@ jobs:
         run: >
           cmake -B bld \
             ${{ matrix.conf.bld }} \
-            -DBUILD_BENCH=ON \
-            -DBUILD_FUZZ_BINARY=ON \
-            -DWITH_ZMQ=ON \
-            -DWITH_USDT=ON \
+            --preset=dev-mode \
             -DWERROR=ON
 
       - &BLD
@@ -245,10 +242,8 @@ jobs:
       - name: Generate buildsystem
         run: |
           cmake -B bld \
-            -DBUILD_BENCH=ON \
-            -DBUILD_FUZZ_BINARY=ON \
+            --preset=dev-mode \
             -DWERROR=ON \
-            -DBUILD_GUI=ON \
             -DWITH_CCACHE=ON
 
       - *BLD
@@ -273,10 +268,8 @@ jobs:
       - name: Generate buildsystem
         run: |
           cmake -B bld \
-            -DBUILD_BENCH=ON \
-            -DBUILD_FUZZ_BINARY=ON \
+            --preset=dev-mode \
             -DWERROR=ON \
-            -DBUILD_GUI=ON \
             -DWITH_CCACHE=ON
 
       - *BLD
@@ -301,10 +294,8 @@ jobs:
       - name: Generate buildsystem
         run: |
           cmake -B bld \
-            -DBUILD_BENCH=ON \
-            -DBUILD_FUZZ_BINARY=ON \
+            --preset=dev-mode \
             -DWERROR=ON \
-            -DBUILD_GUI=ON \
             -DWITH_CCACHE=ON
 
       - *BLD
@@ -329,13 +320,9 @@ jobs:
       - name: Generate buildsystem
         run: |
           cmake -B bld \
-            -DBUILD_BENCH=ON \
-            -DBUILD_FUZZ_BINARY=ON \
+            --preset=dev-mode \
             -DWERROR=ON \
-            -DBUILD_GUI=ON \
-            -DWITH_CCACHE=ON \
-            -DWITH_ZMQ=ON \
-            -DWITH_USDT=ON
+            -DWITH_CCACHE=ON
 
       - *BLD
 

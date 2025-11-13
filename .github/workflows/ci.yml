@@ -221,8 +221,20 @@ jobs:
         run: |
           ${{ matrix.task_adjustments }}
 
+      - name: Create git archive
+        run: |
+          git add --all
+          git config user.name "ci"
+          git config user.email "ci@users.noreply.github.com"
+          git commit --allow-empty --message "CI: snapshot"
+          git show
+          git archive --format=tar --prefix=repo-archive/ --output=repo.tar HEAD
+          tar -xf repo.tar
+
       - name: CI script
-        run: ./ci/test_run_all.sh
+        run: |
+          cd repo-archive
+          ./ci/test_run_all.sh
 
   opensuse-tumbleweed:
     name: 'OpenSUSE Tumbleweed [system libs]'

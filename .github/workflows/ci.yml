@@ -207,7 +207,7 @@ jobs:
             file-env: './ci/test/00_setup_env_s390x.sh'
             task_adjustments: |
               echo 'export RUN_FUZZ_TESTS=true' >> $FILE_ENV
-            runner: test00001  # Create with label here: https://github.com/maflcko/bitcoin-core-nightly/settings/actions/runners/new?arch=x64&os=linux
+            # runner: test00001  # Create with label here: https://github.com/maflcko/bitcoin-core-nightly/settings/actions/runners/new?arch=x64&os=linux
 
 
     steps:

@@ -178,7 +178,7 @@ jobs:
     #   login key mangament:
     #
     # ```
-    # fallocate -l 16G /swapfile_ci && chmod 600 /swapfile_ci && mkswap /swapfile_ci && swapon /swapfile_ci && ( echo '/swapfile_ci none swap sw 0 0' | tee -a /etc/fstab ) && apt update && apt install git screen python3 bash podman-docker uidmap slirp4netns curl -y && podman run --rm --privileged docker.io/multiarch/qemu-user-static --reset -p yes && sysctl vm.mmap_rnd_bits=28 && apt install sshpass -y && mkdir -p /ci_ccache_shared && chmod 2777 /ci_ccache_shared/ && ssh-keygen -t ed25519 -f "$HOME/.ssh/id_ci_workers" -N "" && ssh dummy@localhost
+    # fallocate -l 16G /swapfile_ci && chmod 600 /swapfile_ci && mkswap /swapfile_ci && swapon /swapfile_ci && ( echo '/swapfile_ci none swap sw 0 0' | tee -a /etc/fstab ) && apt update && apt install git screen python3 bash podman-docker uidmap slirp4netns passt curl -y && podman run --rm --privileged docker.io/multiarch/qemu-user-static --reset -p yes && sysctl vm.mmap_rnd_bits=28 && apt install sshpass -y && mkdir -p /ci_ccache_shared && chmod 2777 /ci_ccache_shared/ && ssh-keygen -t ed25519 -f "$HOME/.ssh/id_ci_workers" -N "" && ssh dummy@localhost
     # ```
     #
     # * To register the persistent worker, open a `screen` session, before getting a token from https://github.com/maflcko/bitcoin-core-nightly/settings/actions/runners/new :

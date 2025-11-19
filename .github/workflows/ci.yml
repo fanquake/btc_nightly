@@ -162,7 +162,7 @@ jobs:
 
   ci-mutation-matrix:
     name: ${{ matrix.name }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner || 'ubuntu-latest' }}
     timeout-minutes: 360
 
     env:
@@ -207,13 +207,14 @@ jobs:
             file-env: './ci/test/00_setup_env_s390x.sh'
             task_adjustments: |
               echo 'export RUN_FUZZ_TESTS=true' >> $FILE_ENV
+            runner: self-hosted
 
 
     steps:
       - *CHECKOUT_BC
 
       - name: Set up QEMU
-        if: ${{ matrix.name == 's390x' }}
+        if: ${{ matrix.name == 's390x' && matrix.runner == null }}
         uses: docker/setup-qemu-action@v3
 
       - name: Apply matrix adjustments

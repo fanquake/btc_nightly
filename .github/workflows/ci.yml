@@ -161,6 +161,32 @@ jobs:
           ./bld/test/fuzz/test_runner.py -l DEBUG -j $(nproc) ./qa-assets/fuzz_corpora/
 
   ci-mutation-matrix:
+    #
+    # Allows running on self-hosted runners via qemu-user.
+    #
+    # * Due to bugs in qemu-s390x, at least qemu-user 9.x+ is required, meaning
+    #   RHEL-based 9+, Debian 13+, or Ubuntu 26.04+.
+    # * On machines that are persisted between CI jobs,
+    #   RESTART_CI_DOCKER_BEFORE_RUN=1 ensures that previous containers and
+    #   artifacts are cleared before each run. This requires installing Podman
+    #   instead of Docker.
+    # * Install and setup the ./ci/ dependencies, along with swap (to avoid
+    #   rare and intermittent OOM due to short memory usage spikes), a shared
+    #   ccache (only needed for multi-user/multi-runner systems, needs the env
+    #   vars "CCACHE_MAXSIZE=100G DANGER_CI_ON_HOST_CCACHE_FOLDER=1
+    #   CCACHE_UMASK=000 CCACHE_DIR=/ci_ccache_shared" later on), and user
+    #   login key mangament:
+    #
+    # ```
+    # fallocate -l 16G /swapfile_ci && chmod 600 /swapfile_ci && mkswap /swapfile_ci && swapon /swapfile_ci && ( echo '/swapfile_ci none swap sw 0 0' | tee -a /etc/fstab ) && apt update && apt install git screen python3 bash podman-docker uidmap slirp4netns curl -y && podman run --rm --privileged docker.io/multiarch/qemu-user-static --reset -p yes && sysctl vm.mmap_rnd_bits=28 && apt install sshpass -y && mkdir -p /ci_ccache_shared && chmod 2777 /ci_ccache_shared/ && ssh-keygen -t ed25519 -f "$HOME/.ssh/id_ci_workers" -N "" && ssh dummy@localhost
+    # ```
+    #
+    # * To register the persistent worker, open a `screen` session, before getting a token from https://github.com/maflcko/bitcoin-core-nightly/settings/actions/runners/new :
+    #
+    # ```
+    # ( export CI_W_NAME="ci_worker_$( date +%s_%N )" && groupadd --force ci_ccache_share && useradd --create-home --user-group --groups ci_ccache_share "${CI_W_NAME}" && ( cat "$HOME/.ssh/id_ci_workers.pub" | su - "${CI_W_NAME}" -c 'mkdir -p ~/.ssh && ( cat >> ~/.ssh/authorized_keys ) && chmod -R go= ~/.ssh ' ) && screen -S "session_${CI_W_NAME}" ssh -i "$HOME/.ssh/id_ci_workers" "${CI_W_NAME}@localhost" 'RESTART_CI_DOCKER_BEFORE_RUN=1 bash -c "mkdir actions-runner && cd actions-runner && curl -o actions-runner-linux-x64-2.329.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.329.0/actions-runner-linux-x64-2.329.0.tar.gz && tar xzf ./actions-runner-linux-x64-2.329.0.tar.gz && ./config.sh --labels runner_test_001 --name $USER --unattended --url https://github.com/maflcko/bitcoin-core-nightly --token _token_ && ./run.sh  " ' )
+    # ```
+
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runner || 'ubuntu-latest' }}
     timeout-minutes: 360
@@ -207,7 +233,7 @@ jobs:
             file-env: './ci/test/00_setup_env_s390x.sh'
             task_adjustments: |
               echo 'export RUN_FUZZ_TESTS=true' >> $FILE_ENV
-            # runner: test00001  # Create with label here: https://github.com/maflcko/bitcoin-core-nightly/settings/actions/runners/new?arch=x64&os=linux
+            runner: runner_test_001
 
 
     steps:

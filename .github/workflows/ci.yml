@@ -178,7 +178,11 @@ jobs:
     #   login key mangament:
     #
     # ```
-    # fallocate -l 16G /swapfile_ci && chmod 600 /swapfile_ci && mkswap /swapfile_ci && swapon /swapfile_ci && ( echo '/swapfile_ci none swap sw 0 0' | tee -a /etc/fstab ) && apt update && apt install git screen python3 bash podman-docker uidmap slirp4netns passt aardvark-dns curl -y && podman run --rm --privileged docker.io/multiarch/qemu-user-static --reset -p yes && sysctl vm.mmap_rnd_bits=28 && apt install sshpass -y && mkdir -p /ci_ccache_shared && chmod 2777 /ci_ccache_shared/ && ssh-keygen -t ed25519 -f "$HOME/.ssh/id_ci_workers" -N "" && ssh dummy@localhost
+    # # Ubuntu/Debian
+    # fallocate -l 16G /swapfile_ci && chmod 600 /swapfile_ci && mkswap /swapfile_ci && swapon /swapfile_ci && ( echo '/swapfile_ci none swap sw 0 0' | tee -a /etc/fstab ) && apt update    && apt upgrade -y             &&  apt install -y git screen python3 bash podman-docker uidmap slirp4netns passt aardvark-dns curl             && podman run --rm --privileged docker.io/multiarch/qemu-user-static --reset -p yes && sysctl vm.mmap_rnd_bits=28 && mkdir -p /ci_ccache_shared && chmod 2777 /ci_ccache_shared/ && ssh-keygen -t ed25519 -f "$HOME/.ssh/id_ci_workers" -N "" && ssh dummy@localhost
+    #
+    # # RHEL-based
+    # fallocate -l 16G /swapfile_ci && chmod 600 /swapfile_ci && mkswap /swapfile_ci && swapon /swapfile_ci && ( echo '/swapfile_ci none swap sw 0 0' | tee -a /etc/fstab ) && dnf update -y && dnf install epel-release -y && dnf install -y git screen python3 bash podman-docker shadow-utils-subid slirp4netns passt aardvark-dns curl && podman run --rm --privileged docker.io/multiarch/qemu-user-static --reset -p yes && sysctl vm.mmap_rnd_bits=28 && mkdir -p /ci_ccache_shared && chmod 2777 /ci_ccache_shared/ && ssh-keygen -t ed25519 -f "$HOME/.ssh/id_ci_workers" -N "" && ssh dummy@localhost
     # ```
     #
     # * To register the persistent worker, open a `screen` session, before getting a token from https://github.com/maflcko/bitcoin-core-nightly/settings/actions/runners/new :
@@ -233,7 +237,7 @@ jobs:
             file-env: './ci/test/00_setup_env_s390x.sh'
             task_adjustments: |
               echo 'export RUN_FUZZ_TESTS=true' >> $FILE_ENV
-            runner: runner_test_001
+            # runner: runner_test_001
 
 
     steps:

@@ -471,6 +471,9 @@ jobs:
       - name: Run bitcoind
         run: ./bin/bitcoind -version
 
+      - name: Run Qt unit tests
+        run: ./bin/test_bitcoin-qt
+
       - name: Run unit tests
         run: |
           ./bin/test_bitcoin -l test_suite
@@ -565,6 +568,9 @@ jobs:
 
       - name: Run bitcoind
         run: ./bin/bitcoind -version
+
+      - name: Run Qt unit tests
+        run: ./bin/test_bitcoin-qt
 
       - name: Run unit tests
         run: |

@@ -230,7 +230,7 @@ jobs:
               sed -i 's/NO_IPC=1//g' $FILE_ENV
               sed -i 's/DENABLE_IPC=OFF/DENABLE_IPC=ON/g' $FILE_ENV
               git --no-pager diff
-          - name: 's390x'
+          - name: 's390x +fuzz'
             file-env: './ci/test/00_setup_env_s390x.sh'
             task_adjustments: |
               echo 'export RUN_FUZZ_TESTS=true' >> $FILE_ENV

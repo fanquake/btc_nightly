@@ -445,6 +445,7 @@ jobs:
             ${{ env.BASE_BUILD_DIR }}/src/secp256k1/bin/*
             ${{ env.BASE_BUILD_DIR }}/src/univalue/*
             ${{ env.BASE_BUILD_DIR }}/test/config.ini
+            ${{ env.BASE_BUILD_DIR }}/lib/*.dylib
 
   mac-native-test-intel-rosetta-2:
     name: 'macOS, test cross-built Intel on Rosetta 2'
@@ -542,6 +543,7 @@ jobs:
             ${{ env.BASE_BUILD_DIR }}/src/secp256k1/bin/*
             ${{ env.BASE_BUILD_DIR }}/src/univalue/*
             ${{ env.BASE_BUILD_DIR }}/test/config.ini
+            ${{ env.BASE_BUILD_DIR }}/lib/*.dylib
 
   mac-native-test:
     name: 'macOS, test cross-built'

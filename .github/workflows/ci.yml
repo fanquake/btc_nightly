@@ -454,6 +454,7 @@ jobs:
 
     env:
       TEST_RUNNER_TIMEOUT_FACTOR: 40
+      DYLD_LIBRARY_PATH: ${{ github.workspace }}/lib
 
     steps:
       - *CHECKOUT_BC
@@ -553,6 +554,7 @@ jobs:
 
     env:
       TEST_RUNNER_TIMEOUT_FACTOR: 40
+      DYLD_LIBRARY_PATH: ${{ github.workspace }}/lib
 
     steps:
       - *CHECKOUT_BC

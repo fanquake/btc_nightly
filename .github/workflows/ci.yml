@@ -234,6 +234,7 @@ jobs:
             file-env: './ci/test/00_setup_env_s390x.sh'
             task_adjustments: |
               echo 'export RUN_FUZZ_TESTS=true' >> $FILE_ENV
+            requires_qemu: true
             # runner: runner_test_001
 
 
@@ -241,7 +242,7 @@ jobs:
       - *CHECKOUT_BC
 
       - name: Set up QEMU
-        if: ${{ matrix.name == 's390x' && matrix.runner == null }}
+        if: ${{ matrix.requires_qemu && matrix.runner == null }}
         uses: docker/setup-qemu-action@v3
 
       - name: Apply matrix adjustments

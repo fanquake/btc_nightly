@@ -138,7 +138,9 @@ jobs:
           ${{ matrix.conf.task_adjustments }}
 
       - name: Clear storage space
+        shell: bash
         run: |
+          set -o errexit -o pipefail -o xtrace
           df --human-readable ./
 
           echo "Removing large directories..."

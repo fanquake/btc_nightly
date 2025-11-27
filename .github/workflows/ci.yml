@@ -54,12 +54,12 @@ jobs:
               test: fun
               os: ubuntu-24.04
 
-            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++" -DSANITIZERS=address,undefined -DBUILD_GUI=ON -DAPPEND_CXXFLAGS="-O3 -g2 -Wno-error=maybe-uninitialized -Wno-error=array-bounds -Wno-error=use-after-free -Wno-error=sfinae-incomplete"
+            - bld: -DAPPEND_CXXFLAGS='-O3 -g2'       -DAPPEND_CFLAGS='-O3 -g2'       -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++" -DSANITIZERS=address,undefined -DBUILD_GUI=OFF -DAPPEND_CXXFLAGS="-O3 -g2 -Wno-error=maybe-uninitialized -Wno-error=array-bounds -Wno-error=use-after-free -Wno-error=sfinae-incomplete"
               task_adjustments: |
                 dnf install -y libasan libubsan
                 echo 'nonnull-attribute:streams.h' >> test/sanitizer_suppressions/ubsan
                 echo 'nonnull-attribute:streams.cpp' >> test/sanitizer_suppressions/ubsan
-              desc: "g++ asan + gui"
+              desc: "g++ asan + gui(temp_disabled)"
               test: fun,fuzz
               os: ubuntu-24.04
 

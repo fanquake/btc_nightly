@@ -148,6 +148,14 @@ jobs:
         name: Build
         run: cmake --build ./bld -j $(nproc)
 
+      - name: Clean up temporary build files
+        # Needed for GHA CI runners with limited storage space
+        run: |
+          BUILD_DIR="./bld"
+          du -sh "${BUILD_DIR}"
+          find "${BUILD_DIR}" -type d -name CMakeFiles -exec rm -rf {} +
+          du -sh "${BUILD_DIR}"
+
       - name: Run tests (ctest+functional)
         if: contains(matrix.conf.test, 'fun')
         run: &TESTS_RUN |

@@ -223,6 +223,25 @@ jobs:
             task_adjustments: |
               sed -i 's/-O1/-O0/g' $FILE_ENV
               git --no-pager diff
+          - name: 'asan -O0'
+            file-env: './ci/test/00_setup_env_native_asan.sh'
+            task_adjustments: |
+              sed -i "s/-DSANITIZERS=/-DAPPEND_CXXFLAGS='-O0 -g2' -DSANITIZERS=/g" $FILE_ENV
+              sed -i '/^export CI_LIMIT_STACK_SIZE=1$/d' $FILE_ENV
+              git --no-pager diff
+              echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
+          - name: 'fuzz asan -O0'
+            file-env: './ci/test/00_setup_env_native_fuzz.sh'
+            task_adjustments: |
+              sed -i "s/-DSANITIZERS=/-DAPPEND_CXXFLAGS='-O0 -g2' -DSANITIZERS=/g" $FILE_ENV
+              git --no-pager diff
+          - name: 'tsan -O0'
+            file-env: './ci/test/00_setup_env_native_tsan.sh'
+            task_adjustments: |
+              sed -i "s/-DSANITIZERS=/-DAPPEND_CXXFLAGS='-O0 -g2' -DSANITIZERS=/g" $FILE_ENV
+              sed -i '/^export CI_LIMIT_STACK_SIZE=1$/d' $FILE_ENV
+              git --no-pager diff
+              echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
           - name: 'valgrind'
             file-env: './ci/test/00_setup_env_native_valgrind.sh'
             task_adjustments: ''  # No adjustmen, not run upstream, see https://github.com/bitcoin/bitcoin/pull/33411

@@ -247,6 +247,7 @@ jobs:
               echo 'export CI_IMAGE_PLATFORM="linux/i386"' >> $FILE_ENV
               echo 'implicit-signed-integer-truncation:MillisToTimeval' >> test/sanitizer_suppressions/ubsan
               echo 'implicit-unsigned-integer-truncation:util/hasher.h' >> test/sanitizer_suppressions/ubsan
+              echo 'implicit-unsigned-integer-truncation:util/hasher.cpp' >> test/sanitizer_suppressions/ubsan
               echo 'implicit-unsigned-integer-truncation:util/bytevectorhash.cpp' >> test/sanitizer_suppressions/ubsan
               echo 'unsigned-integer-overflow:TxConfirmStats' >> test/sanitizer_suppressions/ubsan
               echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
@@ -260,6 +261,7 @@ jobs:
               echo 'export CI_IMAGE_PLATFORM="linux/i386"' >> $FILE_ENV
               echo 'implicit-signed-integer-truncation:MillisToTimeval' >> test/sanitizer_suppressions/ubsan
               echo 'implicit-unsigned-integer-truncation:util/hasher.h' >> test/sanitizer_suppressions/ubsan
+              echo 'implicit-unsigned-integer-truncation:util/hasher.cpp' >> test/sanitizer_suppressions/ubsan
               echo 'implicit-unsigned-integer-truncation:util/bytevectorhash.cpp' >> test/sanitizer_suppressions/ubsan
               echo 'unsigned-integer-overflow:TxConfirmStats' >> test/sanitizer_suppressions/ubsan
               echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV

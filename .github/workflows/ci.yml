@@ -241,6 +241,8 @@ jobs:
             file-env: './ci/test/00_setup_env_native_fuzz.sh'
             task_adjustments: |
               sed -i 's/ubuntu:24.04/debian:trixie/g' $FILE_ENV
+              sed -i '/export APT_LLVM_V=".."/d' $FILE_ENV
+              sed -i 's/-${APT_LLVM_V}//g' $FILE_ENV
               sed -i "s/-DCMAKE_CXX_FLAGS='/-DAPPEND_LDFLAGS='-latomic' -DCMAKE_CXX_FLAGS='/g" $FILE_ENV
               echo 'export CI_IMAGE_PLATFORM="linux/i386"' >> $FILE_ENV
               echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
@@ -248,6 +250,8 @@ jobs:
             file-env: './ci/test/00_setup_env_native_asan.sh'
             task_adjustments: |
               sed -i 's/ubuntu:24.04/debian:trixie/g' $FILE_ENV
+              sed -i '/export APT_LLVM_V=".."/d' $FILE_ENV
+              sed -i 's/-${APT_LLVM_V}//g' $FILE_ENV
               sed -i "s/-DCMAKE_CXX_FLAGS='/-DAPPEND_LDFLAGS='-latomic' -DCMAKE_CXX_FLAGS='/g" $FILE_ENV
               echo 'export CI_IMAGE_PLATFORM="linux/i386"' >> $FILE_ENV
               echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV

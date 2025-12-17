@@ -216,31 +216,40 @@ jobs:
             task_adjustments: |
               sed -i 's/-O1/-O0/g' $FILE_ENV
               sed -i '/^export CI_LIMIT_STACK_SIZE=1$/d' $FILE_ENV
-              git --no-pager diff
               echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
           - name: 'fuzz msan -O0'
             file-env: './ci/test/00_setup_env_native_fuzz_with_msan.sh'
             task_adjustments: |
               sed -i 's/-O1/-O0/g' $FILE_ENV
-              git --no-pager diff
           - name: 'asan -O0'
             file-env: './ci/test/00_setup_env_native_asan.sh'
             task_adjustments: |
               sed -i "s/-DSANITIZERS=/-DAPPEND_CXXFLAGS='-O0 -g2' -DSANITIZERS=/g" $FILE_ENV
               sed -i '/^export CI_LIMIT_STACK_SIZE=1$/d' $FILE_ENV
-              git --no-pager diff
               echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
           - name: 'fuzz asan -O0'
             file-env: './ci/test/00_setup_env_native_fuzz.sh'
             task_adjustments: |
               sed -i "s/-DSANITIZERS=/-DAPPEND_CXXFLAGS='-O0 -g2' -DSANITIZERS=/g" $FILE_ENV
-              git --no-pager diff
           - name: 'tsan -O0'
             file-env: './ci/test/00_setup_env_native_tsan.sh'
             task_adjustments: |
               sed -i "s/-DSANITIZERS=/-DAPPEND_CXXFLAGS='-O0 -g2' -DSANITIZERS=/g" $FILE_ENV
               sed -i '/^export CI_LIMIT_STACK_SIZE=1$/d' $FILE_ENV
-              git --no-pager diff
+              echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
+          - name: 'fuzz i386'
+            file-env: './ci/test/00_setup_env_native_fuzz.sh'
+            task_adjustments: |
+              sed -i 's/ubuntu:24.04/debian:trixie/g' $FILE_ENV
+              sed -i "s/-DCMAKE_CXX_FLAGS='/-DAPPEND_LDFLAGS='-latomic' -DCMAKE_CXX_FLAGS='/g" $FILE_ENV
+              echo 'export CI_IMAGE_PLATFORM="linux/i386"' >> $FILE_ENV
+              echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
+          - name: 'fun i386'
+            file-env: './ci/test/00_setup_env_native_asan.sh'
+            task_adjustments: |
+              sed -i 's/ubuntu:24.04/debian:trixie/g' $FILE_ENV
+              sed -i "s/-DCMAKE_CXX_FLAGS='/-DAPPEND_LDFLAGS='-latomic' -DCMAKE_CXX_FLAGS='/g" $FILE_ENV
+              echo 'export CI_IMAGE_PLATFORM="linux/i386"' >> $FILE_ENV
               echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
           - name: 'valgrind'
             file-env: './ci/test/00_setup_env_native_valgrind.sh'
@@ -250,13 +259,11 @@ jobs:
             task_adjustments: |
               sed -i 's/NO_WALLET=1//g' $FILE_ENV
               sed -i 's/DENABLE_WALLET=OFF/DENABLE_WALLET=ON/g' $FILE_ENV
-              git --no-pager diff
           - name: 'i686 ipc'
             file-env: './ci/test/00_setup_env_i686_no_ipc.sh'
             task_adjustments: |
               sed -i 's/NO_IPC=1//g' $FILE_ENV
               sed -i 's/DENABLE_IPC=OFF/DENABLE_IPC=ON/g' $FILE_ENV
-              git --no-pager diff
           - name: 's390x +fuzz'
             file-env: './ci/test/00_setup_env_s390x.sh'
             task_adjustments: |
@@ -276,6 +283,7 @@ jobs:
         if: ${{ matrix.task_adjustments != '' }}
         run: |
           ${{ matrix.task_adjustments }}
+          git --no-pager diff
 
       - name: Create git archive
         run: |

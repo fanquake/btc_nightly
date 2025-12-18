@@ -331,7 +331,7 @@ jobs:
           export DEBIAN_FRONTEND=noninteractive
           apt-get update
           apt-get install -y \
-            ccache \
+            pkg-config ccache \
             build-essential cmake \
             python3 python3-zmq libzmq3-dev libevent-dev \
             libboost-dev libsqlite3-dev systemtap-sdt-dev \
@@ -368,7 +368,7 @@ jobs:
           export DEBIAN_FRONTEND=noninteractive
           apt-get update
           apt-get install -y \
-            ccache \
+            pkg-config ccache \
             build-essential cmake \
             python3 python3-zmq libzmq3-dev libevent-dev \
             libboost-dev libsqlite3-dev systemtap-sdt-dev \

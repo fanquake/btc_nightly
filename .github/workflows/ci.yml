@@ -282,6 +282,7 @@ jobs:
           - name: 's390x +fuzz'
             file-env: './ci/test/00_setup_env_s390x.sh'
             task_adjustments: |
+              sed -i 's/dev-mode/dev-mode -DCMAKE_BUILD_TYPE=Debug/g' $FILE_ENV
               echo 'export RUN_FUZZ_TESTS=true' >> $FILE_ENV
             requires_qemu: true
             # runner: runner_test_001

@@ -353,7 +353,7 @@ jobs:
       - name: Run tests (ctest+functional)
         run: *TESTS_RUN
 
-  ubuntu-22.04:
+  ubuntu-22_04:
     name: 'Ubuntu 22.04 [system libs]'
     runs-on: ubuntu-latest
     timeout-minutes: 360

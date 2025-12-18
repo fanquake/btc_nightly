@@ -316,6 +316,43 @@ jobs:
           cd repo-archive
           ./ci/test_run_all.sh
 
+  debian-bookworm:
+    name: 'debian bookworm [system libs]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    container:
+      image: debian:bookworm
+
+    steps:
+      - *CHECKOUT_BC
+
+      - name: Install dependencies (apt)
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update
+          apt-get install -y \
+            ccache \
+            build-essential cmake \
+            python3 python3-zmq libzmq3-dev libevent-dev \
+            libboost-dev libsqlite3-dev systemtap-sdt-dev \
+            libcapnp-dev capnproto libqrencode-dev \
+            qt6-tools-dev qt6-l10n-tools qt6-base-dev \
+            g++-12 clang-19 llvm-19 libc++-19-dev libc++abi-19-dev mold
+
+      - name: Generate buildsystem
+        run: |
+          cmake -B bld \
+            --preset=dev-mode \
+            -DCMAKE_C_COMPILER=clang-19 \
+            -DCMAKE_CXX_COMPILER='clang++-19;-stdlib=libc++' \
+            -DWERROR=ON \
+            -DWITH_CCACHE=ON
+
+      - *BLD
+
+      - name: Run tests (ctest+functional)
+        run: *TESTS_RUN
+
   ubuntu-22.04:
     name: 'Ubuntu 22.04 [system libs]'
     runs-on: ubuntu-latest
@@ -337,12 +374,14 @@ jobs:
             libboost-dev libsqlite3-dev systemtap-sdt-dev \
             libcapnp-dev capnproto libqrencode-dev \
             qt6-tools-dev qt6-l10n-tools qt6-base-dev \
-            clang llvm libc++-dev libc++abi-dev mold
+            g++-12 clang llvm libc++-dev libc++abi-dev mold
 
       - name: Generate buildsystem
         run: |
           cmake -B bld \
-            --preset=dev-mode \
+            --preset=dev-mode -DBUILD_GUI=OFF -DENABLE_IPC=OFF \
+            -DCMAKE_C_COMPILER=gcc-12 \
+            -DCMAKE_CXX_COMPILER=g++-12 \
             -DWERROR=ON \
             -DWITH_CCACHE=ON
 

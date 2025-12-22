@@ -342,7 +342,7 @@ jobs:
       - name: Generate buildsystem
         run: |
           cmake -B bld \
-            --preset=dev-mode -DENABLE_IPC=OFF \
+            --preset=dev-mode -DENABLE_IPC=OFF -DBUILD_GUI=OFF \
             -DCMAKE_C_COMPILER=clang-19 \
             -DCMAKE_CXX_COMPILER='clang++-19;-stdlib=libc++' \
             -DWERROR=ON \

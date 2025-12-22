@@ -246,7 +246,7 @@ jobs:
               sed -i "s/-DCMAKE_CXX_FLAGS='/-DAPPEND_LDFLAGS='-latomic' -DCMAKE_CXX_FLAGS='/g" $FILE_ENV
               echo 'export CI_IMAGE_PLATFORM="linux/i386"' >> $FILE_ENV
               echo 'implicit-signed-integer-truncation:MillisToTimeval' >> test/sanitizer_suppressions/ubsan  # Shold be fixed on armhf. For i386 could append -D_TIME_BITS=64 in CMakeLists.txt
-              echo 'implicit-signed-integer-truncation:streams.cpp' >> test/sanitizer_suppressions/ubsan
+              echo 'implicit-signed-integer-truncation:streams.cpp' >> test/sanitizer_suppressions/ubsan  # Use fseeko/ftello (POSIX, uses off_t) on platforms where available. CMakeLists.txt:    _FILE_OFFSET_BITS=64 is already set
               echo 'implicit-unsigned-integer-truncation:util/hasher.h' >> test/sanitizer_suppressions/ubsan
               echo 'implicit-unsigned-integer-truncation:util/hasher.cpp' >> test/sanitizer_suppressions/ubsan
               echo 'implicit-unsigned-integer-truncation:util/bytevectorhash.cpp' >> test/sanitizer_suppressions/ubsan

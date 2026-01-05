@@ -198,6 +198,8 @@ jobs:
     # ```
     # ( export CI_W_NAME="ci_worker_$( date +%s_%N )" && groupadd --force ci_ccache_share && useradd --create-home --user-group --groups ci_ccache_share "${CI_W_NAME}" && ( cat "$HOME/.ssh/id_ci_workers.pub" | su - "${CI_W_NAME}" -c 'mkdir -p ~/.ssh && ( cat >> ~/.ssh/authorized_keys ) && chmod -R go= ~/.ssh ' ) && screen -S "session_${CI_W_NAME}" ssh -i "$HOME/.ssh/id_ci_workers" "${CI_W_NAME}@localhost" 'RESTART_CI_DOCKER_BEFORE_RUN=1 bash -c "mkdir actions-runner && cd actions-runner && curl -o actions-runner-linux-x64-2.329.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.329.0/actions-runner-linux-x64-2.329.0.tar.gz && tar xzf ./actions-runner-linux-x64-2.329.0.tar.gz && ./config.sh --labels runner_test_001 --name $USER --unattended --url https://github.com/maflcko/bitcoin-core-nightly --token _token_ && ./run.sh  " ' )
     # ```
+    #
+    # Warning: The mutation matrix below will likely lead to cache-thrashing, because the CI container name is not adjusted for matrix mutations.
 
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runner || 'ubuntu-latest' }}

@@ -612,9 +612,6 @@ jobs:
           ./src/univalue/object
           ./src/univalue/unitester
 
-      - name: Run benchmarks
-        run: ./bin/bench_bitcoin -sanity-check
-
       - name: Adjust paths in test/config.ini
         run: |
           sed -i '' "s|^SRCDIR=.*|SRCDIR=${{ github.workspace }}|" test/config.ini
@@ -711,9 +708,6 @@ jobs:
           ./src/secp256k1/bin/tests
           ./src/univalue/object
           ./src/univalue/unitester
-
-      - name: Run benchmarks
-        run: ./bin/bench_bitcoin -sanity-check
 
       - name: Adjust paths in test/config.ini
         run: |

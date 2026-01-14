@@ -160,7 +160,7 @@ jobs:
         if: contains(matrix.conf.test, 'fun')
         run: &TESTS_RUN |
           ctest --output-on-failure --stop-on-failure --test-dir ./bld -j $(nproc)
-          ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --combinedlogslen=99999999 --timeout-factor=10 --extended --exclude "interface_bitcoin_cli,rpc_bind --ipv6"
+          ./bld/test/functional/test_runner.py -j $(( $(nproc) * 2 )) --combinedlogslen=99999999 --timeout-factor=10 --extended --exclude "interface_bitcoin_cli" --exclude "rpc_bind --ipv6"
 
       - name: Run tests (fuzz)
         if: contains(matrix.conf.test, 'fuzz')

@@ -626,7 +626,7 @@ jobs:
       - name: Run functional tests
         env:
           TEST_RUNNER_EXTRA: ${{ github.event_name != 'pull_request' && '--extended' || '' }}
-        run: python3 test/functional/test_runner.py --jobs $(sysctl -n hw.ncpu) --ci --quiet --tmpdirprefix="$RUNNER_TEMP" --combinedlogslen=99999999 --timeout-factor=$TEST_RUNNER_TIMEOUT_FACTOR $TEST_RUNNER_EXTRA
+        run: python3 test/functional/test_runner.py --jobs $(sysctl -n hw.ncpu) --quiet --tmpdirprefix="$RUNNER_TEMP" --combinedlogslen=99999999 --timeout-factor=$TEST_RUNNER_TIMEOUT_FACTOR $TEST_RUNNER_EXTRA
 
   mac-cross:
     name: 'Linux->macOS cross, no tests'
@@ -723,4 +723,4 @@ jobs:
       - name: Run functional tests
         env:
           TEST_RUNNER_EXTRA: ${{ github.event_name != 'pull_request' && '--extended' || '' }}
-        run: python3 test/functional/test_runner.py --jobs $(sysctl -n hw.ncpu) --ci --quiet --tmpdirprefix="$RUNNER_TEMP" --combinedlogslen=99999999 --timeout-factor=$TEST_RUNNER_TIMEOUT_FACTOR $TEST_RUNNER_EXTRA
+        run: python3 test/functional/test_runner.py --jobs $(sysctl -n hw.ncpu) --quiet --tmpdirprefix="$RUNNER_TEMP" --combinedlogslen=99999999 --timeout-factor=$TEST_RUNNER_TIMEOUT_FACTOR $TEST_RUNNER_EXTRA

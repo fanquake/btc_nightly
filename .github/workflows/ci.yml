@@ -142,7 +142,7 @@ jobs:
           cmake -B bld \
             ${{ matrix.conf.bld }} \
             --preset=dev-mode \
-            -DWERROR=ON
+            -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
 
       - &BLD
         name: Build
@@ -346,7 +346,7 @@ jobs:
             --preset=dev-mode -DENABLE_IPC=OFF -DBUILD_GUI=OFF \
             -DCMAKE_C_COMPILER=clang-19 \
             -DCMAKE_CXX_COMPILER='clang++-19;-stdlib=libc++' \
-            -DWERROR=ON \
+            -DCMAKE_COMPILE_WARNING_AS_ERROR=ON \
             -DWITH_CCACHE=ON
 
       - *BLD
@@ -383,7 +383,7 @@ jobs:
             --preset=dev-mode -DBUILD_GUI=OFF -DENABLE_IPC=OFF \
             -DCMAKE_C_COMPILER=gcc-12 \
             -DCMAKE_CXX_COMPILER=g++-12 \
-            -DWERROR=ON \
+            -DCMAKE_COMPILE_WARNING_AS_ERROR=ON \
             -DWITH_CCACHE=ON
 
       - *BLD
@@ -411,7 +411,7 @@ jobs:
           cmake -B bld \
             --preset=dev-mode \
             -DWITH_USDT=OFF \
-            -DWERROR=ON \
+            -DCMAKE_COMPILE_WARNING_AS_ERROR=ON \
             -DWITH_CCACHE=ON
 
       - *BLD
@@ -438,7 +438,7 @@ jobs:
           cmake -B bld \
             --preset=dev-mode \
             -DWITH_USDT=OFF \
-            -DWERROR=ON \
+            -DCMAKE_COMPILE_WARNING_AS_ERROR=ON \
             -DWITH_CCACHE=ON
 
       - *BLD
@@ -464,7 +464,7 @@ jobs:
         run: |
           cmake -B bld \
             --preset=dev-mode \
-            -DWERROR=ON \
+            -DCMAKE_COMPILE_WARNING_AS_ERROR=ON \
             -DWITH_CCACHE=ON
 
       - *BLD
@@ -490,7 +490,7 @@ jobs:
         run: |
           cmake -B bld \
             --preset=dev-mode \
-            -DWERROR=ON \
+            -DCMAKE_COMPILE_WARNING_AS_ERROR=ON \
             -DWITH_CCACHE=ON
 
       - *BLD
@@ -515,7 +515,7 @@ jobs:
       - name: Generate buildsystem (fuzz)
         run: |
           cmake -B bld \
-            -DWERROR=ON \
+            -DCMAKE_COMPILE_WARNING_AS_ERROR=ON \
             -DWITH_CCACHE=ON \
             -DBUILD_FOR_FUZZING=ON \
             -DSANITIZERS=fuzzer,address,integer,undefined,float-divide-by-zero \

@@ -270,6 +270,9 @@ jobs:
           - name: 'valgrind'
             file-env: './ci/test/00_setup_env_native_valgrind.sh'
             task_adjustments: ''  # No adjustmen, not run upstream, see https://github.com/bitcoin/bitcoin/pull/33411
+          - name: 'fuzz valgrind'
+            file-env: './ci/test/00_setup_env_native_fuzz_with_valgrind.sh'
+            task_adjustments: ''  # No adjustmen, not run upstream, see https://github.com/bitcoin/bitcoin/pull/
           - name: 'clang-min'
             file-env: './ci/test/00_setup_env_native_nowallet.sh'
             task_adjustments: |

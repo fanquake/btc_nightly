@@ -309,7 +309,7 @@ jobs:
         if: ${{ matrix.task_adjustments != '' }}
         run: |
           ${{ matrix.task_adjustments }}
-          git --no-pager diff
+          git --no-pager diff -U55
 
       - name: Create git archive
         run: |

@@ -213,32 +213,35 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: 'msan -O0'
+          - name: 'msan ext -O0'
             file-env: './ci/test/00_setup_env_native_msan.sh'
             task_adjustments: |
               sed -i 's/-O1/-O0/g' $FILE_ENV
               sed -i '/^export CI_LIMIT_STACK_SIZE=1$/d' $FILE_ENV
               echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
+              echo 'TEST_RUNNER_EXTRA="--extended"' >> $FILE_ENV
           - name: 'fuzz msan -O0'
             file-env: './ci/test/00_setup_env_native_fuzz_with_msan.sh'
             task_adjustments: |
               sed -i 's/-O1/-O0/g' $FILE_ENV
-          - name: 'asan -O0'
+          - name: 'asan ext -O0'
             file-env: './ci/test/00_setup_env_native_asan.sh'
             task_adjustments: |
               sed -i "s/-DAPPEND_CXXFLAGS='/-DAPPEND_CXXFLAGS='-O0 -g2 /g" $FILE_ENV
               sed -i '/^export CI_LIMIT_STACK_SIZE=1$/d' $FILE_ENV
               echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
+              echo 'TEST_RUNNER_EXTRA="--extended"' >> $FILE_ENV
           - name: 'fuzz asan -O0'
             file-env: './ci/test/00_setup_env_native_fuzz.sh'
             task_adjustments: |
               sed -i "s/-DSANITIZERS=/-DAPPEND_CXXFLAGS='-O0 -g2' -DSANITIZERS=/g" $FILE_ENV
-          - name: 'tsan -O0'
+          - name: 'tsan ext -O0'
             file-env: './ci/test/00_setup_env_native_tsan.sh'
             task_adjustments: |
               sed -i "s/-DSANITIZERS=/-DAPPEND_CXXFLAGS='-O0 -g2' -DSANITIZERS=/g" $FILE_ENV
               sed -i '/^export CI_LIMIT_STACK_SIZE=1$/d' $FILE_ENV
               echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
+              echo 'TEST_RUNNER_EXTRA="--extended"' >> $FILE_ENV
           - name: 'fuzz i386'
             file-env: './ci/test/00_setup_env_native_fuzz.sh'
             task_adjustments: |
@@ -253,7 +256,7 @@ jobs:
               echo 'implicit-unsigned-integer-truncation:util/hasher.cpp' >> test/sanitizer_suppressions/ubsan
               echo 'implicit-unsigned-integer-truncation:util/bytevectorhash.cpp' >> test/sanitizer_suppressions/ubsan
               echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
-          - name: 'fun i386'
+          - name: 'fun ext i386'
             file-env: './ci/test/00_setup_env_native_asan.sh'
             task_adjustments: |
               sed -i 's/ubuntu:24.04/debian:trixie/g' $FILE_ENV
@@ -267,9 +270,11 @@ jobs:
               echo 'implicit-unsigned-integer-truncation:util/hasher.cpp' >> test/sanitizer_suppressions/ubsan
               echo 'implicit-unsigned-integer-truncation:util/bytevectorhash.cpp' >> test/sanitizer_suppressions/ubsan
               echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
-          - name: 'valgrind'
+              echo 'TEST_RUNNER_EXTRA="--extended"' >> $FILE_ENV
+          - name: 'valgrind ext'
             file-env: './ci/test/00_setup_env_native_valgrind.sh'
-            task_adjustments: ''  # No adjustmen, not run upstream, see https://github.com/bitcoin/bitcoin/pull/33411
+            task_adjustments: |
+              sed -i 's/TEST_RUNNER_EXTRA="/TEST_RUNNER_EXTRA="--extended /g' $FILE_ENV
           - name: 'fuzz valgrind'
             file-env: './ci/test/00_setup_env_native_fuzz_with_valgrind.sh'
             task_adjustments: ''  # No adjustmen, not run upstream, see https://github.com/bitcoin/bitcoin/pull/
@@ -283,11 +288,12 @@ jobs:
             task_adjustments: |
               sed -i 's/NO_IPC=1//g' $FILE_ENV
               sed -i 's/DENABLE_IPC=OFF/DENABLE_IPC=ON/g' $FILE_ENV
-          - name: 's390x +fuzz'
+          - name: 's390x ext_fun+fuzz'
             file-env: './ci/test/00_setup_env_s390x.sh'
             task_adjustments: |
               sed -i 's/dev-mode/dev-mode -DCMAKE_BUILD_TYPE=Debug/g' $FILE_ENV
               echo 'export RUN_FUZZ_TESTS=true' >> $FILE_ENV
+              sed -i 's/TEST_RUNNER_EXTRA="/TEST_RUNNER_EXTRA="--extended /g' $FILE_ENV
             requires_qemu: true
             # runner: runner_test_001
 

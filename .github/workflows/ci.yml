@@ -120,14 +120,14 @@ jobs:
           LLVM_VERSION=$( apt-cache search --names-only '^clang-[0-9]+$' | sort --version-sort | tail -1 | cut -f1 -d" " | cut -f2 -d"-" )
           echo "LLVM_VERSION=${LLVM_VERSION}" >> "$GITHUB_ENV"
           echo "LLVM_SYMBOLIZER_PATH=/usr/bin/llvm-symbolizer-${LLVM_VERSION}" >> "$GITHUB_ENV"
-          apt-get install -y clang-${LLVM_VERSION} libc++-${LLVM_VERSION}-dev libc++abi-${LLVM_VERSION}-dev git cmake pkg-config build-essential ninja-build libboost-dev libevent-dev libsqlite3-dev libcapnp-dev capnproto libzmq3-dev ccache qt6-tools-dev qt6-l10n-tools qt6-base-dev libqrencode-dev systemtap-sdt-dev python3-zmq
+          apt-get install -y clang-${LLVM_VERSION} llvm-${LLVM_VERSION} llvm-${LLVM_VERSION}-dev libclang-${LLVM_VERSION}-dev libclang-rt-${LLVM_VERSION}-dev libc++-${LLVM_VERSION}-dev libc++abi-${LLVM_VERSION}-dev git cmake pkg-config build-essential ninja-build libboost-dev libevent-dev libsqlite3-dev libcapnp-dev capnproto libzmq3-dev ccache qt6-tools-dev qt6-l10n-tools qt6-base-dev libqrencode-dev systemtap-sdt-dev python3-zmq
           echo
           clang-${LLVM_VERSION} -v
 
       - name: Build instrumented libc++
         if: ${{ matrix.conf.build_instrumented_libcxx }}
         run: |
-          git clone --depth=1 https://github.com/llvm/llvm-project -b "llvmorg-22.1.0" /llvm-project
+          git clone --depth=1 https://github.com/llvm/llvm-project /llvm-project
           cmake -G Ninja -B /cxx_build/ \
             -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" \
             -DCMAKE_BUILD_TYPE=Release \

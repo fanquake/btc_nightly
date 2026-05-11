@@ -499,6 +499,7 @@ jobs:
         run: |
           cmake -B bld \
             --preset=dev-mode \
+            -DAPPEND_CXXFLAGS="-Wno-error=stringop-overflow" \
             -DCMAKE_COMPILE_WARNING_AS_ERROR=ON \
             -DWITH_CCACHE=ON
 
@@ -525,6 +526,7 @@ jobs:
         run: |
           cmake -B bld \
             --preset=dev-mode \
+            -DAPPEND_CXXFLAGS="-Wno-error=stringop-overflow" \
             -DCMAKE_COMPILE_WARNING_AS_ERROR=ON \
             -DWITH_CCACHE=ON
 

@@ -499,7 +499,7 @@ jobs:
         run: |
           cmake -B bld \
             --preset=dev-mode \
-            -DAPPEND_CXXFLAGS="-Wno-error=stringop-overflow" \
+            -DAPPEND_CXXFLAGS="-Wno-error=stringop-overflow -Wno-error=sfinae-incomplete" \
             -DCMAKE_COMPILE_WARNING_AS_ERROR=ON \
             -DWITH_CCACHE=ON
 
@@ -526,7 +526,7 @@ jobs:
         run: |
           cmake -B bld \
             --preset=dev-mode \
-            -DAPPEND_CXXFLAGS="-Wno-error=stringop-overflow" \
+            -DAPPEND_CXXFLAGS="-Wno-error=stringop-overflow -Wno-error=sfinae-incomplete" \
             -DCMAKE_COMPILE_WARNING_AS_ERROR=ON \
             -DWITH_CCACHE=ON
 

@@ -73,13 +73,13 @@ jobs:
               test: fun,fuzz
               os: ubuntu-24.04
 
-            - bld:                                 -DAPPEND_CFLAGS='-O3 -g2 -flto=1 -flto-partition=1to1' -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++;-D_GLIBCXX_DEBUG;-D_GLIBCXX_DEBUG_PEDANTIC" -DAPPEND_CXXFLAGS="-O3 -g2 -flto=1 -flto-partition=1to1 -Wno-error=sfinae-incomplete"
+            - bld:                                 -DAPPEND_CFLAGS='-O3 -g2 -flto=1 -g0' -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++;-D_GLIBCXX_DEBUG;-D_GLIBCXX_DEBUG_PEDANTIC" -DAPPEND_CXXFLAGS="-O3 -g2 -flto=1 -g0 -Wno-error=sfinae-incomplete"
               task_adjustments: ''
               desc: "g++ DEBUG lto"
               test: fun,fuzz
               os: ubuntu-24.04
 
-            - bld:                                 -DAPPEND_CFLAGS='-O3 -g2 -flto=1 -flto-partition=1to1' -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++" -DBUILD_GUI=ON -DAPPEND_CXXFLAGS="-O3 -g2 -flto=1 -flto-partition=1to1 -Wno-error=sfinae-incomplete"
+            - bld:                                 -DAPPEND_CFLAGS='-O3 -g2 -flto=1 -g0' -DCMAKE_BUILD_TYPE=Debug -DAPPEND_CPPFLAGS='-D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' -DCMAKE_C_COMPILER="/opt/gcc-latest/bin/gcc" -DCMAKE_CXX_COMPILER="/opt/gcc-latest/bin/g++;-static-libstdc++" -DBUILD_GUI=ON -DAPPEND_CXXFLAGS="-O3 -g2 -flto=1 -g0 -Wno-error=sfinae-incomplete"
               task_adjustments: ''
               desc: "g++ lto"
               test: fun,fuzz

@@ -586,19 +586,17 @@ jobs:
 
       - name: Restore caches
         id: restore-cache
-        uses: bitcoin/bitcoin/.github/actions/restore-caches@master
+        uses: bitcoin/bitcoin/.github/actions/cache/restore@master
 
       - name: Configure Docker
         uses: bitcoin/bitcoin/.github/actions/configure-docker@master
-        with:
-          cache-provider: 'gha'
 
       - name: CI script
         run: |
           ./ci/test_run_all.sh
 
       - name: Save caches
-        uses: bitcoin/bitcoin/.github/actions/save-caches@master
+        uses: bitcoin/bitcoin/.github/actions/cache/save@master
 
       - name: Upload built executables
         uses: actions/upload-artifact@v4
@@ -682,19 +680,17 @@ jobs:
 
       - name: Restore caches
         id: restore-cache
-        uses: bitcoin/bitcoin/.github/actions/restore-caches@master
+        uses: bitcoin/bitcoin/.github/actions/cache/restore@master
 
       - name: Configure Docker
         uses: bitcoin/bitcoin/.github/actions/configure-docker@master
-        with:
-          cache-provider: 'gha'
 
       - name: CI script
         run: |
           ./ci/test_run_all.sh
 
       - name: Save caches
-        uses: bitcoin/bitcoin/.github/actions/save-caches@master
+        uses: bitcoin/bitcoin/.github/actions/cache/save@master
 
       - name: Upload built executables
         uses: actions/upload-artifact@v4

@@ -268,6 +268,10 @@ jobs:
               sed -i '/^export CI_LIMIT_STACK_SIZE=1$/d' $FILE_ENV
               echo 'TEST_RUNNER_TIMEOUT_FACTOR=400' >> $GITHUB_ENV
               echo 'TEST_RUNNER_EXTRA="--extended"' >> $FILE_ENV
+          - name: 'fuzz tsan'
+            file-env: './ci/test/00_setup_env_native_fuzz.sh'
+            task_adjustments: |
+              sed -i --regexp-extended 's/fuzzer,address\S*/fuzzer,thread/g' $FILE_ENV
           - name: 'fuzz i386'
             file-env: './ci/test/00_setup_env_native_fuzz.sh'
             task_adjustments: |

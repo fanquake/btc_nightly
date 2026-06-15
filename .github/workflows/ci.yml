@@ -271,7 +271,7 @@ jobs:
           - name: 'fuzz i386'
             file-env: './ci/test/00_setup_env_native_fuzz.sh'
             task_adjustments: |
-              sed -i 's/ubuntu:24.04/debian:trixie/g' $FILE_ENV
+              sed -i 's/ubuntu:26.04/debian:unstable/g' $FILE_ENV
               sed -i '/export APT_LLVM_V=".."/d' $FILE_ENV
               sed -i 's/-${APT_LLVM_V}//g' $FILE_ENV
               sed -i "s/-DCMAKE_CXX_FLAGS='/-DAPPEND_LDFLAGS='-latomic' -DCMAKE_CXX_FLAGS='/g" $FILE_ENV
@@ -285,7 +285,7 @@ jobs:
           - name: 'fun ext i386'
             file-env: './ci/test/00_setup_env_native_asan.sh'
             task_adjustments: |
-              sed -i 's/ubuntu:24.04/debian:trixie/g' $FILE_ENV
+              sed -i 's/ubuntu:24.04/debian:unstable/g' $FILE_ENV
               sed -i '/export APT_LLVM_V=".."/d' $FILE_ENV
               sed -i 's/-${APT_LLVM_V}//g' $FILE_ENV
               sed -i "s/-DCMAKE_CXX_FLAGS='/-DAPPEND_LDFLAGS='-latomic' -DCMAKE_CXX_FLAGS='/g" $FILE_ENV

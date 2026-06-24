@@ -123,7 +123,7 @@ jobs:
           LLVM_VERSION=$( apt-cache search --names-only '^clang-[0-9]+$' | sort --version-sort | tail -1 | cut -f1 -d" " | cut -f2 -d"-" )
           echo "LLVM_VERSION=${LLVM_VERSION}" >> "$GITHUB_ENV"
           echo "LLVM_SYMBOLIZER_PATH=/usr/bin/llvm-symbolizer-${LLVM_VERSION}" >> "$GITHUB_ENV"
-          apt-get install -y clang-${LLVM_VERSION} llvm-${LLVM_VERSION} llvm-${LLVM_VERSION}-dev libclang-${LLVM_VERSION}-dev libclang-rt-${LLVM_VERSION}-dev libc++-${LLVM_VERSION}-dev libc++abi-${LLVM_VERSION}-dev git cmake pkg-config build-essential ninja-build libboost-dev libevent-dev libsqlite3-dev libcapnp-dev capnproto libzmq3-dev ccache qt6-tools-dev qt6-l10n-tools qt6-base-dev libqrencode-dev systemtap-sdt-dev python3-zmq
+          apt-get install -y clang-${LLVM_VERSION} llvm-${LLVM_VERSION} llvm-${LLVM_VERSION}-dev libclang-${LLVM_VERSION}-dev libclang-rt-${LLVM_VERSION}-dev libc++-${LLVM_VERSION}-dev libc++abi-${LLVM_VERSION}-dev git cmake pkg-config build-essential ninja-build libboost-dev libsqlite3-dev libcapnp-dev capnproto libzmq3-dev ccache qt6-tools-dev qt6-l10n-tools qt6-base-dev libqrencode-dev systemtap-sdt-dev python3-zmq
           echo
           clang-${LLVM_VERSION} -v
 
@@ -152,7 +152,7 @@ jobs:
       - name: Install gcc (Fedora)
         if: "contains(matrix.conf.bld, 'gcc-latest')"
         run: |
-          dnf install -y git cmake pkgconfig boost-devel libevent-devel sqlite-devel capnproto capnproto-devel zeromq-devel ccache qt6-qttools-devel qt6-qtbase-devel qrencode-devel systemtap-sdt-devel python3-zmq libstdc++
+          dnf install -y git cmake pkgconfig boost-devel sqlite-devel capnproto capnproto-devel zeromq-devel ccache qt6-qttools-devel qt6-qtbase-devel qrencode-devel systemtap-sdt-devel python3-zmq libstdc++
           dnf -y copr enable jwakely/gcc-latest
           dnf -y install gcc-latest
           echo
@@ -373,7 +373,7 @@ jobs:
           apt-get install -y \
             pkg-config ccache \
             build-essential cmake \
-            python3 python3-zmq libzmq3-dev libevent-dev \
+            python3 python3-zmq libzmq3-dev \
             libboost-dev libsqlite3-dev systemtap-sdt-dev \
             libcapnp-dev capnproto libqrencode-dev \
             qt6-tools-dev qt6-l10n-tools qt6-base-dev \
@@ -410,7 +410,7 @@ jobs:
           apt-get install -y \
             pkg-config ccache \
             build-essential cmake \
-            python3 python3-zmq libzmq3-dev libevent-dev \
+            python3 python3-zmq libzmq3-dev \
             libboost-dev libsqlite3-dev systemtap-sdt-dev \
             libcapnp-dev capnproto libqrencode-dev \
             qt6-tools-dev qt6-l10n-tools qt6-base-dev \
@@ -443,7 +443,7 @@ jobs:
       - name: Install dependencies (zypper)
         run: |
           zypper --non-interactive install -t pattern devel_basis
-          zypper --non-interactive install e2fsprogs git pkg-config cmake python3 libevent-devel libboost_headers-devel gcc-c++ ccache zeromq-devel qt6-base-devel qt6-tools-devel qt6-linguist-devel qrencode-devel sqlite3-devel libcapnp-devel capnproto
+          zypper --non-interactive install e2fsprogs git pkg-config cmake python3 libboost_headers-devel gcc-c++ ccache zeromq-devel qt6-base-devel qt6-tools-devel qt6-linguist-devel qrencode-devel sqlite3-devel libcapnp-devel capnproto
 
       - name: Generate buildsystem
         run: |
@@ -470,7 +470,7 @@ jobs:
 
       - name: Install dependencies (apk)
         run: |
-          apk --no-cache add e2fsprogs-extra cmake g++ gcc git make pkgconfig python3 boost-dev libevent-dev zeromq-dev qt6-qtbase-dev qt6-qttools-dev ccache libqrencode-dev capnproto-dev
+          apk --no-cache add e2fsprogs-extra cmake g++ gcc git make pkgconfig python3 boost-dev zeromq-dev qt6-qtbase-dev qt6-qttools-dev ccache libqrencode-dev capnproto-dev
 
       - name: Generate buildsystem
         run: |
@@ -497,7 +497,7 @@ jobs:
 
       - name: Install dependencies (pacman)
         run: |
-          pacman --noconfirm -Syu e2fsprogs cmake git gcc make python3 boost libevent zeromq ccache qt6 qrencode capnproto
+          pacman --noconfirm -Syu e2fsprogs cmake git gcc make python3 boost zeromq ccache qt6 qrencode capnproto
 
       - name: Generate buildsystem
         run: |
@@ -524,7 +524,7 @@ jobs:
 
       - name: Install dependencies (dnf)
         run: |
-          dnf install -y e2fsprogs ccache gcc-c++ make cmake libevent-devel boost-devel python3 qt6-qtbase-devel qt6-qttools-devel sqlite-devel capnproto capnproto-devel qrencode-devel systemtap-sdt-devel zeromq-devel
+          dnf install -y e2fsprogs ccache gcc-c++ make cmake boost-devel python3 qt6-qtbase-devel qt6-qttools-devel sqlite-devel capnproto capnproto-devel qrencode-devel systemtap-sdt-devel zeromq-devel
 
       - name: Generate buildsystem
         run: |
@@ -551,7 +551,7 @@ jobs:
 
       - name: Install dependencies (dnf)
         run: |
-          dnf install -y make cmake libevent-devel boost-devel sqlite-devel capnproto capnproto-devel python3 clang llvm git
+          dnf install -y make cmake boost-devel sqlite-devel capnproto capnproto-devel python3 clang llvm git
 
       - name: Generate buildsystem (fuzz)
         run: |
